@@ -1,0 +1,8 @@
+---
+db:
+  dbhost: localhost
+  dbuser: injuryfx
+  dbpass: sMEBydxlB
+  dbname: injuryfx
+  dbport: 3306
+...
