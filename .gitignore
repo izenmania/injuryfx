@@ -2,3 +2,4 @@
 sql/*
 old/*
 data/*
+*/__pycache__

@@ -5,4 +5,7 @@ db:
   dbpass: sMEBydxlB
   dbname: injuryfx
   dbport: 3306
+aws:
+  key: AKIAJWAN6PXW4LAPGY6Q
+  secret: 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
 ...
