@@ -5,7 +5,7 @@ from datetime import date
 from aws import connect
 import botocore
 
-__injury_terms = ["activated", "placed", "transferred"]
+__injury_terms = ["activated", "placed", "transferred", "from the 15", "from the 60", "from the 7"]
 
 raw_transactions = []
 raw_injuries = []
@@ -33,12 +33,12 @@ def save_raw(filename):
 
 
 # Retrieve the raw data from the mlb.com json endpoint
-def get_raw(start_date: date, end_date: date):
+def get_raw(start_date, end_date):
     global raw_transactions, raw_injuries
 
     # Make sure startDate and endDate are actually dates
     if type(start_date) is not date or type(end_date) is not date:
-        raise TypeError("Both arguments of getRaw must be dates")
+        raise TypeError("Both arguments of get_raw must be dates")
 
     # Construct the URL for the mlb.com json endpoint
     url = "http://mlb.mlb.com/lookup/json/named.transaction_all.bam?start_date=%(sd)s&end_date=%(ed)s&sport_code=%(sc)s"
@@ -56,12 +56,12 @@ def get_raw(start_date: date, end_date: date):
     raw_injuries = filter_raw_injuries()
 
 
-def append_raw(start_date: date, end_date: date):
+def append_raw(start_date, end_date):
     global raw_transactions, raw_injuries
 
     # Make sure startDate and endDate are actually dates
     if type(start_date) is not date or type(end_date) is not date:
-        raise TypeError("Both arguments of getRaw must be dates")
+        raise TypeError("Both arguments of append_raw must be dates")
 
     # Construct the URL for the mlb.com json endpoint
     url = "http://mlb.mlb.com/lookup/json/named.transaction_all.bam?start_date=%(sd)s&end_date=%(ed)s&sport_code=%(sc)s"
@@ -98,7 +98,9 @@ def filter_raw_injuries():
 
     i = []
     for t in raw_transactions:
-        if any(term in t["note"] for term in __injury_terms):
+        if any(term in t["note"] for term in __injury_terms) and not (
+                            "paternity list" in t["note"] or "restricted list" in t["note"] or "bereavement list" in t["note"] or "waivers" in t["note"]
+        ):
             i.append(t)
 
     return i

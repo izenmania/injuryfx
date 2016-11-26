@@ -1,5 +1,6 @@
 import re
 from db import query
+from datetime import datetime
 
 # note = trans["note"]
 # team = trans["team"]
@@ -11,7 +12,7 @@ from db import query
 __injury_terms = ["activated", "placed", "transferred"]
 __positions = ["C", "1B", "2B", "3B", "SS", "RF", "CF", "LF", "OF", "DH", "RHP", "LHP"]
 __directions = ["from", "on", "to"]
-__dl_types = ["15-day", "60-day"]
+__dl_types = ["15-day", "60-day", "7-day"]
 
 __part_key_list = query.select_list("SELECT exact FROM body_part_map")
 
@@ -20,13 +21,15 @@ __part_key_list = query.select_list("SELECT exact FROM body_part_map")
 def parse_note(note, team_name, player_name):
 
     search_string = team_name + \
-                    " (" + '|'.join(__injury_terms) + ")" + \
+                    " ?(" + '|'.join(__injury_terms) + ")?" + \
                     " (" + '|'.join(__positions) + ") " + \
                     player_name + \
                     " (" + '|'.join(__directions) + ")" + \
                     " the( 15-day disabled list to the)?" + \
                     " (" + '|'.join(__dl_types) + ")" + \
-                    " disabled list( .*)?\. ?(.*)?"
+                    " disabled list" + \
+                    "( retroactive to [a-zA-Z]* \d{1,2}, \d{4})?\. ?"+\
+                    "(.*)?"
 
     results = re.search(search_string, note)
 
@@ -36,8 +39,14 @@ def parse_note(note, team_name, player_name):
             "dl_type": results.group(5),
         }
 
+        if not fields["action"]:
+            if "from the 15-day" in note or "from the 60-day" in note:
+                fields["action"] = "activated"
+
         inj = parse_injury(results.group(7).replace(".", ""))
         fields.update(inj)
+    elif "activated" in note:
+        fields = {"action": "activated"}
     else:
         fields = {}
 
@@ -75,8 +84,8 @@ def parse_injury_transaction(raw_injury):
     note = parse_note(raw_injury["note"], raw_injury["team"], raw_injury["player"])
 
     inj = {
-        "transaction_id": raw_injury["player"],
-        "transaction_date": raw_injury["effective_date"],
+        "transaction_id": raw_injury["transaction_id"],
+        "transaction_date": datetime.strptime(raw_injury["effective_date"], "%Y-%m-%dT%H:%M:%S"),
         "player_name": raw_injury["player"],
         "player_id_mlbam": raw_injury["player_id"],
         "team_name": raw_injury["team"],
