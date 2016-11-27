@@ -99,4 +99,4 @@ def parse_injury_transaction(raw_injury):
 
 # Return a general body part from the exact part
 def get_general_part(exact):
-    return query.select_single("SELECT general FROM body_part_map WHERE exact = %s", (exact))
+    return query.select_single("SELECT general FROM body_part_map WHERE exact = %s", (exact,))

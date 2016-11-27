@@ -1,13 +1,13 @@
 from config import load
-import pymysql
+import MySQLdb
 
 conf = load.conf
 
 
 def open():
-    return pymysql.connect(
+    return MySQLdb.connect(
         host=conf['db']['dbhost'],
         user=conf['db']['dbuser'],
-        password=conf['db']['dbpass'],
+        passwd=conf['db']['dbpass'],
         db=conf['db']['dbname']
     )

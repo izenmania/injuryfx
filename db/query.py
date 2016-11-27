@@ -7,10 +7,10 @@ def select_list(query):
     out = []
 
     try:
-        with conn.cursor() as cur:
-            cur.execute(query)
-            for row in cur:
-                out.append(row[0])
+        cur = conn.cursor()
+        cur.execute(query)
+        for row in cur:
+            out.append(row[0])
     finally:
         conn.close()
 
@@ -22,10 +22,10 @@ def select_single(query, params=()):
     val = None
 
     try:
-        with conn.cursor() as cur:
-            cur.execute(query, params)
-            if cur.rowcount > 0:
-                val = cur.fetchone()[0]
+        cur = conn.cursor()
+        cur.execute(query, params)
+        if cur.rowcount > 0:
+            val = cur.fetchone()[0]
     finally:
         conn.close()
 
