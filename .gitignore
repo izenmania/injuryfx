@@ -3,3 +3,5 @@ sql/*
 old/*
 data/*
 */__pycache__
+ifx/*
+*/*.pyc
