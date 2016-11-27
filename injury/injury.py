@@ -2,7 +2,6 @@ import sys
 from db import connect
 from db import query
 import json
-from pymysql import err
 from datetime import datetime
 import exceptions
 
@@ -17,81 +16,81 @@ def save_injury(inj):
     conn = connect.open()
 
     try:
-        with conn.cursor() as cur:
-            if inj['action'] == "placed":
-                # This is a new injury, so insert it fresh.
-                insert_sql = '''
-                    INSERT INTO injuries (
-                        injury_id, player_id_mlbam, team_id_mlbam, injury, side, parts, dl_type, start_date, end_date
-                    ) VALUES (
-                        null, %s, %s, %s, %s, %s, %s, %s, NULL
-                    )
-                '''
-                params = (
-                    inj['player_id_mlbam'],
-                    inj['team_id_mlbam'],
-                    inj['injury'] if 'injury' in inj else '',
-                    inj['side'] if 'side' in inj else '',
-                    json.dumps(inj['parts']) if 'parts' in inj else '',
-                    inj['dl_type'],
-                    inj['transaction_date'].strftime("%Y-%m-%d")
+        cur = conn.cursor()
+
+        if inj['action'] == "placed":
+            # This is a new injury, so insert it fresh.
+            insert_sql = '''
+                INSERT INTO injuries (
+                    injury_id, player_id_mlbam, team_id_mlbam, injury, side, parts, dl_type, start_date, end_date
+                ) VALUES (
+                    null, %s, %s, %s, %s, %s, %s, %s, NULL
                 )
+            '''
+            params = (
+                inj['player_id_mlbam'],
+                inj['team_id_mlbam'],
+                inj['injury'] if 'injury' in inj else '',
+                inj['side'] if 'side' in inj else '',
+                json.dumps(inj['parts']) if 'parts' in inj else '',
+                inj['dl_type'],
+                inj['transaction_date'].strftime("%Y-%m-%d")
+            )
 
-                out = cur.execute(insert_sql, params)
-                conn.commit()
+            out = cur.execute(insert_sql, params)
+            conn.commit()
 
-            else:
-                # Get the most recent uncompleted injury by the player
-                select_sql = '''
-                    SELECT injury_id
-                    FROM injuries
-                    WHERE player_id_mlbam = %s
-                        AND end_date IS NULL
-                    ORDER BY start_date DESC
-                    LIMIT 1
-                '''
-                inj_id = query.select_single(select_sql, inj['player_id_mlbam'])
+        else:
+            # Get the most recent uncompleted injury by the player
+            select_sql = '''
+                SELECT injury_id
+                FROM injuries
+                WHERE player_id_mlbam = %s
+                    AND end_date IS NULL
+                ORDER BY start_date DESC
+                LIMIT 1
+            '''
+            inj_id = query.select_single(select_sql, (inj['player_id_mlbam'],))
 
-                if inj_id:
-                    if inj['action'] == 'activated':
-                        # The injury incident is over, set the end_date
-                        update_sql = '''
-                            UPDATE injuries
-                            SET end_date = %s
-                            WHERE injury_id = %s
-                        '''
-                        params = (
-                            inj['transaction_date'].strftime("%Y-%m-%d"),
-                            inj_id
-                        )
+            if inj_id:
+                if inj['action'] == 'activated':
+                    # The injury incident is over, set the end_date
+                    update_sql = '''
+                        UPDATE injuries
+                        SET end_date = %s
+                        WHERE injury_id = %s
+                    '''
+                    params = (
+                        inj['transaction_date'].strftime("%Y-%m-%d"),
+                        inj_id
+                    )
 
-                        out = cur.execute(update_sql, params)
-                        conn.commit()
-                    else:
-                        # The player has moved from 15-day to 60-day DL, update dl_type
-                        update_sql = '''
-                            UPDATE injuries
-                            SET dl_type = %s
-                            WHERE injury_id = %s
-                        '''
-
-                        params = (
-                            inj['dl_type'],
-                            inj_id
-                        )
-
-                        out = cur.execute(update_sql, params)
-                        conn.commit()
+                    out = cur.execute(update_sql, params)
+                    conn.commit()
                 else:
-                    # No matching injury entry was found.
-                    out = "Error: no injury match found."
-                    # TODO: log the unmatched injury to somewhere
+                    # The player has moved from 15-day to 60-day DL, update dl_type
+                    update_sql = '''
+                        UPDATE injuries
+                        SET dl_type = %s
+                        WHERE injury_id = %s
+                    '''
+
+                    params = (
+                        inj['dl_type'],
+                        inj_id
+                    )
+
+                    out = cur.execute(update_sql, params)
+                    conn.commit()
+            else:
+                # No matching injury entry was found.
+                out = "Error: no injury match found."
+                # TODO: log the unmatched injury to somewhere
 
     # TODO: improve error handling
-    except err.DataError as e:
+    except exceptions.TypeError as e:
         print(e)
-    except KeyError as e:
-        print(inj['note'])
+    except exceptions.AttributeError as e:
         print(e)
     except:
         print("Error!", sys.exc_info()[0])
