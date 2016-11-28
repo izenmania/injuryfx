@@ -1,4 +1,4 @@
-from config import load
+from credentials import load
 import MySQLdb
 
 conf = load.conf

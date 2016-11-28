@@ -1,4 +1,4 @@
-from config import load
+from credentials import load
 import boto3
 
 conf = load.conf

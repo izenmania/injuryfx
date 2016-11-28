@@ -7,7 +7,7 @@ import re
 # Internal Packages
 from injury import raw
 from injury import parse
-from config import load
+from credentials import load
 #from db import connect
 # from db import query
 #from aws import connect as s3
