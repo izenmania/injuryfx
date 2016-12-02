@@ -97,10 +97,43 @@ def save_injury(inj):
 
 
 # Load the details of a single injury by id
-def load_injury(inj_id, columns=""):
+def get_injury(inj_id, columns=""):
     # TODO: retrieve a single injury row from the database based on injury_id.
     # If columns is empty, return all. Otherwise, only those specified.
-    pass
+
+    conn = connect.open()
+
+    # (13330L, 452095L, 144L, 'fractured left hand', 'left', '["hand"]', '15-day', datetime.date(2016, 7, 10), datetime.date(2016, 8, 17))
+
+    sql = '''
+        SELECT injury_id, player_id_mlbam, team_id_mlbam, injury, side, parts, dl_type, start_date, end_date
+        FROM injuries
+        WHERE injury_id = %s
+    '''
+
+    params = (inj_id,)
+    cur = conn.cursor()
+    cur.execute(sql, params)
+
+    if cur.rowcount > 0:
+        res = cur.fetchone()
+
+        inj = {
+            "injury_id": res[0],
+            "player_id_mlbam": res[1],
+            "team_id_mlbam": res[2],
+            "injury": res[3],
+            "side": res[4],
+            "parts": json.loads(res[5]),
+            "dl_type": res[6],
+            "start_date": res[7],
+            "end_date": res[8]
+        }
+
+        return inj
+    else:
+        return None
+
 
 
 # Find all injuries matching the given set of search terms
