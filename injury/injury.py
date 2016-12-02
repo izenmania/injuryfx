@@ -6,8 +6,6 @@ from datetime import datetime
 import exceptions
 
 
-
-
 # save_injury: Take a dict from parse_injury_transaction save it in the database
 # This function is intended to be run chronologically over the entries in the json files.
 # Transfer and activate options rely on finding the most recent prior transaction for the player.
@@ -98,9 +96,10 @@ def save_injury(inj):
     return out
 
 
-
 # Load the details of a single injury by id
-def load_injury(inj_id):
+def load_injury(inj_id, columns=""):
+    # TODO: retrieve a single injury row from the database based on injury_id.
+    # If columns is empty, return all. Otherwise, only those specified.
     pass
 
 
