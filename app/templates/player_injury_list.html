@@ -1,0 +1,23 @@
+{% extends "player.html" %}
+{% block subhead %}
+    <h3>Injury History</h3>
+{% endblock %}
+{% block content %}
+    {% for inj in injuries %}
+    <p>
+        {{ inj['injury'] }} ({{ ",".join(inj['parts']) }}) •
+        {{ inj['dl_type'] }} •
+        {{ inj['start_date'] }}-{{ inj['end_date'] }}<br />
+        Splits:
+        <a href="/injury/{{ split }}?inj_id={{ inj['injury_id'] }}&window=50">
+            {% if split == 'batter' %}
+                Batting
+            {% else %}
+                Pitching
+            {% endif %}
+        </a>
+    </p>
+    {% else %}
+        This player has no complete injuries.
+    {% endfor %}
+{% endblock %}

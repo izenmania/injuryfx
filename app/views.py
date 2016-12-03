@@ -4,8 +4,10 @@ from app import app
 from .forms import PitcherForm, BatterForm, InjuryForm, WindowForm
 from stats import batter as b
 from stats import pitcher as p
+from stats import player as pl
 from injury import injury
 import StringIO
+from datetime import datetime, date
 import random
 
 from matplotlib.figure import Figure
@@ -109,3 +111,23 @@ def pitcher():
     }
 
     return render_template('prepost.html', title='Pitcher', pre=pre, post=post, player=inj)
+
+
+
+#[{'dl_type': '60-day', 'first_name': 'Tyler', 'last_name': 'Flowers', 'end_date': datetime.date(2013, 10, 24), 'start_date': datetime.date(2013, 9, 3), 'parts': [u'shoulder'], 'injury_id': 11957L, 'team_id_mlbam': 145L, 'injury': 'right shoulder surgery', 'side': 'right', 'player_id_mlbam': 452095L}, {'dl_type': '15-day', 'first_name': 'Tyler', 'last_name': 'Flowers', 'end_date': datetime.date(2016, 8, 17), 'start_date': datetime.date(2016, 7, 10), 'parts': [u'hand'], 'injury_id': 13330L, 'team_id_mlbam': 144L, 'injury': 'fractured left hand', 'side': 'left', 'player_id_mlbam': 452095L}]
+
+@app.route('/player')
+def player():
+    player_id = request.args.get("player_id")
+
+    split = pl.split_type(player_id)
+
+    p = {
+        "first_name": "Tyler",
+        "last_name": "Flowers",
+        "player_id": 452095
+    }
+
+    i = [{'dl_type': '60-day', 'first_name': 'Tyler', 'last_name': 'Flowers', 'end_date': "10/24/2013", 'start_date': "9/3/2013", 'parts': [u'shoulder'], 'injury_id': 11957L, 'team_id_mlbam': 145L, 'injury': 'right shoulder surgery', 'side': 'right', 'player_id_mlbam': 452095L}, {'dl_type': '15-day', 'first_name': 'Tyler', 'last_name': 'Flowers', 'end_date': date(2016, 8, 17), 'start_date': date(2016, 7, 10), 'parts': [u'hand'], 'injury_id': 13330L, 'team_id_mlbam': 144L, 'injury': 'fractured left hand', 'side': 'left', 'player_id_mlbam': 452095L}]
+
+    return render_template('player_injury_list.html', title='Player', player=p, injuries=i, split=split)

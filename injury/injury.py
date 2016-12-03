@@ -4,6 +4,7 @@ from db import query
 import json
 from datetime import datetime
 import exceptions
+import MySQLdb
 
 
 # save_injury: Take a dict from parse_injury_transaction save it in the database
@@ -116,25 +117,13 @@ def get_injury(inj_id, columns=""):
     '''
 
     params = (inj_id,)
-    cur = conn.cursor()
+    cur = conn.cursor(MySQLdb.cursors.DictCursor)
     cur.execute(sql, params)
 
     if cur.rowcount > 0:
-        res = cur.fetchone()
+        inj = cur.fetchone()
 
-        inj = {
-            "injury_id": res[0],
-            "player_id_mlbam": res[1],
-            "team_id_mlbam": res[2],
-            "injury": res[3],
-            "side": res[4],
-            "parts": json.loads(res[5]),
-            "dl_type": res[6],
-            "start_date": res[7],
-            "end_date": res[8],
-            "first_name": res[9],
-            "last_name": res[10]
-        }
+        inj["parts"] = json.loads(inj["parts"]),
 
         return inj
     else:
@@ -145,3 +134,34 @@ def get_injury(inj_id, columns=""):
 # Find all injuries matching the given set of search terms
 def search_injuries(name="", start_date="", end_date=""):
     pass
+
+# Find all injuries for a given player
+def get_player_injuries(player_id, complete=False):
+    conn = connect.open()
+
+    if complete:
+        condition = "AND i.end_date IS NOT NULL"
+    else:
+        condition = ""
+
+    sql = '''
+        SELECT i.injury_id, i.player_id_mlbam, i.team_id_mlbam,
+            i.injury, i.side, i.parts, i.dl_type,
+            i.start_date, i.end_date,
+            p.first_name, p.last_name
+        FROM injuryfx.injuries i
+            INNER JOIN gameday.player p ON p.id = i.player_id_mlbam
+        WHERE i.player_id_mlbam = %s
+            %s
+        ORDER BY i.start_date DESC
+    ''' % (player_id, condition)
+
+    cur = conn.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute(sql)
+
+    list = []
+    for row in cur:
+        row['parts'] = json.loads(row['parts'])
+        list.append(row)
+
+    return list
