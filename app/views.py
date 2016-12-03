@@ -58,9 +58,6 @@ def postplot():
 
 @app.route('/injury/batter')
 def batter():
-    img = BytesIO()
-    img = BytesIO()
-    img = BytesIO()
     inj_id = request.args.get("inj_id")
     window = request.args.get("window")
 
