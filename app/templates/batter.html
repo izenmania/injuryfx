@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
 <div class="w3-container w3-padding-128 w3-center" id="splits">
-    <h1>{{ inj["player_name"] }}</h1>
+    <h1>{{ inj["first_name"] }} {{ inj["last_name"] }}</h1>
     <h3>{{ inj["injury"] }} ({{ ",".join(inj["parts"]) }}) • {{ inj["start_date"] }} - {{ inj["end_date"] }}</h3>
     <div style="width: 50%; float: left">
         <img src="{{ pre["image_path"] }}" style="width: 60%" />
