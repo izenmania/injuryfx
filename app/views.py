@@ -64,14 +64,14 @@ def pitcher():
     window = request.args.get("window")
 
     inj = injury.get_injury(inj_id)
-    s = p.prepost_aggregate_stats(int(inj_id), int(window))
+    s = p.prepost_aggregate_opp_stats(int(inj_id), int(window))
 
     pre = {
-        "stats": b.slash_line("Opposing Slash Line: "+s["pre"]),
+        "stats": "Opposing Slash Line: "+b.slash_line(s["pre"]),
         "image_path": "/static/images/figure_1.png"
     }
     post = {
-        "stats": b.slash_line("Opposing Slash Line: "+s["post"]),
+        "stats": "Opposing Slash Line: "+b.slash_line(s["post"]),
         "image_path": "/static/images/figure_1.png"
     }
 
