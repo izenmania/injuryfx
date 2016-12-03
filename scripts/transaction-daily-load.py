@@ -1,5 +1,8 @@
+import sys, os
 import datetime
 from datetime import timedelta
+
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from injury import raw
 
 # This process is intended to run every morning

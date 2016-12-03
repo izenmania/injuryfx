@@ -1,7 +1,12 @@
-from injury import raw
-import sys
+import sys, os
 from datetime import date
 from datetime import timedelta
+
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
+from injury import raw
+from injury import parse
+from injury import injury
+
 
 # This is the first date of the json-based transaction tracker
 start_date = date(2009, 4, 1)
@@ -24,6 +29,10 @@ while start_date < final_date:
     next_date = next_month(start_date)
     end_date = next_date - timedelta(days=1)
     filename = start_date.strftime("%Y%m.json")
-    raw.get_raw(start_date, end_date)
-    raw.save_raw(filename)
+
+    raw.load_raw(filename)
+
+    injuries = [injury.save_injury(parse.parse_injury_transaction(i)) for i in raw.raw_injuries]
+    print(injuries)
+
     start_date = next_date

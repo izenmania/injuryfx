@@ -1,9 +1,10 @@
 # External Packages
-import sys
+import sys, os
 from datetime import date
 from datetime import timedelta
 import re
 
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 # Internal Packages
 from injury import raw
 from injury import parse
