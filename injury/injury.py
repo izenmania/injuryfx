@@ -136,13 +136,8 @@ def search_injuries(name="", start_date="", end_date=""):
     pass
 
 # Find all injuries for a given player
-def get_player_injuries(player_id, complete=False):
+def get_player_injuries(player_id):
     conn = connect.open()
-
-    if complete:
-        condition = "AND i.end_date IS NOT NULL"
-    else:
-        condition = ""
 
     sql = '''
         SELECT i.injury_id, i.player_id_mlbam, i.team_id_mlbam,
@@ -152,12 +147,12 @@ def get_player_injuries(player_id, complete=False):
         FROM injuryfx.injuries i
             INNER JOIN gameday.player p ON p.id = i.player_id_mlbam
         WHERE i.player_id_mlbam = %s
-            %s
         ORDER BY i.start_date DESC
-    ''' % (player_id, condition)
+    '''
+    params = (player_id, )
 
     cur = conn.cursor(MySQLdb.cursors.DictCursor)
-    cur.execute(sql)
+    cur.execute(sql, params)
 
     list = []
     for row in cur:

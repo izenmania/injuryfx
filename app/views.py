@@ -128,6 +128,6 @@ def player():
         "player_id": 452095
     }
 
-    i = [{'dl_type': '60-day', 'first_name': 'Tyler', 'last_name': 'Flowers', 'end_date': "10/24/2013", 'start_date': "9/3/2013", 'parts': [u'shoulder'], 'injury_id': 11957L, 'team_id_mlbam': 145L, 'injury': 'right shoulder surgery', 'side': 'right', 'player_id_mlbam': 452095L}, {'dl_type': '15-day', 'first_name': 'Tyler', 'last_name': 'Flowers', 'end_date': date(2016, 8, 17), 'start_date': date(2016, 7, 10), 'parts': [u'hand'], 'injury_id': 13330L, 'team_id_mlbam': 144L, 'injury': 'fractured left hand', 'side': 'left', 'player_id_mlbam': 452095L}]
+    i = injury.get_player_injuries(player_id)
 
     return render_template('player_injury_list.html', title='Player', player=p, injuries=i, split=split)
