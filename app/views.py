@@ -53,4 +53,4 @@ def batter():
     # post["image_path"] = "/static/images/figure_1.png"
     # post["stats"] = "Stuff"
 
-    return render_template('batter.html', title='Batter', pre=pre, post=post, inj=inj)
+    return render_template('prepost.html', title='Batter', pre=pre, post=post, inj=inj)
