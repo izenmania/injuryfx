@@ -61,32 +61,32 @@ def batter():
     inj_id = request.args.get("inj_id")
     window = request.args.get("window")
 
-    # inj = injury.get_injury(inj_id)
-    # s = b.prepost_aggregate_stats(int(inj_id), int(window))
-    #
-    # pre = {
-    #     "stats": "Slash Line: "+b.slash_line(s["pre"]),
-    #     "image_path": "/static/images/figure_1.png"
-    # }
-    # post = {
-    #     "stats": "Slash Line: "+b.slash_line(s["post"]),
-    #     "image_path": "/static/images/figure_1.png"
-    # }
+    inj = injury.get_injury(inj_id)
+    s = b.prepost_aggregate_stats(int(inj_id), int(window))
 
-    inj = {
-        "first_name": "Bryce",
-        "last_name": "Harper",
-        "injury": "strained hamstring",
-        "parts": ["leg"],
-        "start_date": "7/13/2016",
-        "end_date": "8/4/2016"
+    pre = {
+        "stats": "Slash Line: "+b.slash_line(s["pre"]),
+        "image_path": "/static/images/figure_1.png"
     }
-    pre = {}
-    post = {}
-    pre["image_path"] = "/static/images/figure_1.png"
-    pre["stats"] = "Things"
-    post["image_path"] = "/static/images/figure_1.png"
-    post["stats"] = "Stuff"
+    post = {
+        "stats": "Slash Line: "+b.slash_line(s["post"]),
+        "image_path": "/static/images/figure_1.png"
+    }
+
+    # inj = {
+    #     "first_name": "Bryce",
+    #     "last_name": "Harper",
+    #     "injury": "strained hamstring",
+    #     "parts": ["leg"],
+    #     "start_date": "7/13/2016",
+    #     "end_date": "8/4/2016"
+    # }
+    # pre = {}
+    # post = {}
+    # pre["image_path"] = "/static/images/figure_1.png"
+    # pre["stats"] = "Things"
+    # post["image_path"] = "/static/images/figure_1.png"
+    # post["stats"] = "Stuff"
 
     return render_template('prepost.html', title='Batter', pre=pre, post=post, player=inj)
 
