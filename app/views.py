@@ -31,7 +31,26 @@ def batter():
     inj = injury.get_injury(inj_id)
     s = b.prepost_aggregate_stats(int(inj_id), int(window))
 
-    pre_slash = b.slash_line(s["pre"])
-    post_slash = b.slash_line(s["post"])
+    pre = {}
+    post = {}
 
-    return render_template('batter.html', title='Batter', pre_slash=pre_slash, post_slash=post_slash)
+    pre["stats"] = b.slash_line(s["pre"])
+    post["stats"] = b.slash_line(s["post"])
+    pre["image_path"] = "/static/images/figure_1.png"
+    post["image_path"] = "/static/images/figure_1.png"
+
+    # inj = {
+    #     "player_name": "Bryce Harper",
+    #     "injury": "strained hamstring",
+    #     "parts": ["leg"],
+    #     "start_date": "7/13/2016",
+    #     "end_date": "8/4/2016"
+    # }
+    # pre = {}
+    # post = {}
+    # pre["image_path"] = "/static/images/figure_1.png"
+    # pre["stats"] = "Things"
+    # post["image_path"] = "/static/images/figure_1.png"
+    # post["stats"] = "Stuff"
+
+    return render_template('batter.html', title='Batter', pre=pre, post=post, inj=inj)
