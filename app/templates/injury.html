@@ -1,0 +1,4 @@
+{% extends "player.html" %}
+{% block subhead %}
+<h3>{{ player["injury"] }} ({{ ",".join(player["parts"]) }}) • {{ player["start_date"] }} - {{ player["end_date"] }}</h3>
+{% endblock %}
