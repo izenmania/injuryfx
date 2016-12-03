@@ -108,4 +108,4 @@ def pitcher():
         "image_path": "/static/images/figure_1.png"
     }
 
-    return render_template('prepost.html', title='Pitcher', pre=pre, post=post, inj=inj)
+    return render_template('prepost.html', title='Pitcher', pre=pre, post=post, player=inj)
