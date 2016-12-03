@@ -1,9 +1,15 @@
-from flask import render_template
+from flask import render_template, make_response, send_file
 from flask import request
 from app import app
 from .forms import PitcherForm, BatterForm, InjuryForm, WindowForm
 from stats import batter as b
 from injury import injury
+import StringIO
+import random
+
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from stats import graphics
 
 @app.route('/')
 @app.route('/index')
@@ -22,9 +28,38 @@ def index():
 			   injuryform = injuryform,
 			   windowform = windowform)
 
+@app.route('/preplot/')
+def preplot():
+
+    # Create the image object
+    fig = graphics.generate_heatmap(1)
+
+    # Create a fake file
+    canvas = FigureCanvas(fig)
+    output = StringIO.StringIO()
+    fig.savefig(output)
+    output.seek(0)
+    return send_file(output, mimetype='image/png')
+
+
+@app.route('/postplot/')
+def postplot():
+
+    # Create the image object
+    fig = graphics.generate_heatmap(1)
+
+    # Create a fake file
+    canvas = FigureCanvas(fig)
+    output = StringIO.StringIO()
+    fig.savefig(output)
+    output.seek(0)
+    return send_file(output, mimetype='image/png')
 
 @app.route('/injury/batter')
 def batter():
+    img = BytesIO()
+    img = BytesIO()
+    img = BytesIO()
     inj_id = request.args.get("inj_id")
     window = request.args.get("window")
 
