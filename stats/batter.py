@@ -78,3 +78,10 @@ def aggregatable_stats_window(batter_id, date, count):
     sql = "SELECT * FROM aggregate_batting WHERE batter = %s AND date %s '%s' ORDER BY game_id, inning, num LIMIT %s" % (batter_id, operator, date.strftime("%Y-%m-%d"), abs(count))
 
     return pandas.read_sql_query(sql, conn)
+
+
+# Take a the results of aggregate_stats and return a slash line (avg/obp/slg) in text format
+def slash_line(agg_stats):
+    return "/".join((format(agg_stats["AVG"], '.3f').lstrip("0"),
+                     format(agg_stats["OBP"], '.3f').lstrip("0"),
+                     format(agg_stats["SLG"], '.3f').lstrip("0")))

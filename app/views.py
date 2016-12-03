@@ -31,6 +31,7 @@ def batter():
     inj = injury.get_injury(inj_id)
     s = b.prepost_aggregate_stats(int(inj_id), int(window))
 
-    pre_slash = "/".join((format(s["pre"]["AVG"], '.3f').lstrip("0"), format(s["pre"]["OBP"], '.3f').lstrip("0"), format(s["pre"]["SLG"], '.3f').lstrip("0")))
-    post_slash = "/".join((format(s["post"]["AVG"], '.3f').lstrip("0"), format(s["post"]["OBP"], '.3f').lstrip("0"), format(s["post"]["SLG"], '.3f').lstrip("0")))
+    pre_slash = b.slash_line(s["pre"])
+    post_slash = b.slash_line(s["post"])
+
     return render_template('batter.html', title='Batter', pre_slash=pre_slash, post_slash=post_slash)
