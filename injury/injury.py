@@ -117,14 +117,25 @@ def get_injury(inj_id, columns=""):
     '''
 
     params = (inj_id,)
-    cur = conn.cursor(MySQLdb.cursors.DictCursor)
+    cur = conn.cursor()
     cur.execute(sql, params)
 
     if cur.rowcount > 0:
-        inj = cur.fetchone()
+        res = cur.fetchone()
 
-        inj["parts"] = json.loads(inj["parts"]),
-
+        inj = {
+            "injury_id": res[0],
+            "player_id_mlbam": res[1],
+            "team_id_mlbam": res[2],
+            "injury": res[3],
+            "side": res[4],
+            "parts": json.loads(res[5]),
+            "dl_type": res[6],
+            "start_date": res[7],
+            "end_date": res[8],
+            "first_name": res[9],
+            "last_name": res[10]
+        }
         return inj
     else:
         return None
