@@ -106,8 +106,12 @@ def get_injury(inj_id, columns=""):
     # (13330L, 452095L, 144L, 'fractured left hand', 'left', '["hand"]', '15-day', datetime.date(2016, 7, 10), datetime.date(2016, 8, 17))
 
     sql = '''
-        SELECT injury_id, player_id_mlbam, team_id_mlbam, injury, side, parts, dl_type, start_date, end_date
-        FROM injuries
+        SELECT i.injury_id, i.player_id_mlbam, i.team_id_mlbam,
+            i.injury, i.side, i.parts, i.dl_type,
+            i.start_date, i.end_date,
+            p.first_name, p.last_name
+        FROM injuryfx.injuries i
+            INNER JOIN gameday.player p ON p.id = i.player_id_mlbam
         WHERE injury_id = %s
     '''
 
@@ -127,7 +131,9 @@ def get_injury(inj_id, columns=""):
             "parts": json.loads(res[5]),
             "dl_type": res[6],
             "start_date": res[7],
-            "end_date": res[8]
+            "end_date": res[8],
+            "first_name": res[9],
+            "last_name": res[10]
         }
 
         return inj
