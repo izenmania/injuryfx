@@ -129,7 +129,7 @@ def get_injury(inj_id, columns=""):
             "team_id_mlbam": res[2],
             "injury": res[3],
             "side": res[4],
-            "parts": json.loads(res[5]),
+            "parts": json.loads(res[5]) if res[5] else "",
             "dl_type": res[6],
             "start_date": res[7],
             "end_date": res[8],
@@ -168,7 +168,7 @@ def get_player_injuries(player_id):
 
     list = []
     for row in cur:
-        row['parts'] = json.loads(row['parts'])
+        row['parts'] = json.loads(row['parts']) if row['parts'] else ""
         list.append(row)
 
     return list
