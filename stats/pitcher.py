@@ -74,9 +74,8 @@ def get_pitches(player_id, date, count):
 
     return pandas.read_sql_query(sql, conn)
 
-
-def create_prepost_pitch_selection_histograms(injury_id, window):
-    '''Create histograms of pitch selection before and after an injury'''
+def get_prepost_pitch_selection_histogram(injury_id, window):
+    '''Create graph comparing of pitch selection before and after an injury'''
 
     max_window_size = injury.get_max_pitch_window(injury_id)
     if window > max_window_size:
@@ -85,16 +84,5 @@ def create_prepost_pitch_selection_histograms(injury_id, window):
     inj = injury.get_injury(injury_id)
     pre = get_pitches(inj["player_id_mlbam"], inj["start_date"], window*-1)
     post = get_pitches(inj["player_id_mlbam"], inj["start_date"], window)
-
-    print "pre:"
-    for row in pre.iterrows():
-        print row[1]["pitch_type"], "=", row[1]["pitch_count"]
-
-    print "\npost:"
-    for row in post.iterrows():
-        print row[1]["pitch_type"], "=", row[1]["pitch_count"]
-
-
-    graphics.create_bar_chart(pre, post, injury_id, window)
-
+    return graphics.create_bar_chart(pre, post, injury_id, window)
 
