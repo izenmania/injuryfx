@@ -44,8 +44,16 @@ def get_pitches(batter_id, date, count, columns=(), result=""):
 
     conn = connect.open()
 
-    sql = '''SELECT pitch.x, pitch.y FROM game JOIN pitch ON game.game_id=pitch.game_id WHERE pitch.batter = %s AND game.date %s '%s' ORDER BY game.date DESC LIMIT %s'''
-    params =  (batter_id, operator, date.strftime("%Y-%m-%d"), abs(count))
+    sql = '''
+        SELECT p.px AS x, p.py AS y
+        FROM gameday.game g
+            INNER JOIN  gameday.pitch p ON g.game_id=p.game_id
+        WHERE p.batter = %s AND g.date __operator__ %s
+        ORDER BY g.date ASC
+        LIMIT %s
+    '''
+    sql = sql.replace("__operator__", operator)
+    params =  (batter_id, date.strftime("%Y-%m-%d"), abs(count))
 
     cur = conn.cursor(MySQLdb.cursors.DictCursor)
     cur.execute(sql, params)
@@ -67,9 +75,16 @@ def get_atbats(batter_id, date, count, columns=()):
 
     conn = connect.open()
 
-    sql = '''SELECT game.date, atbat.event FROM game JOIN atbat ON game.game_id=atbat.game_id WHERE atbat.batter = %s AND game.date %s '%s' ORDER BY game.date DESC LIMIT %s'''
+    sql = '''
+        SELECT g.date, ab.event
+        FROM gameday.game g
+            INNER JOIN JOIN gameday.atbat ab ON g.game_id=ab.game_id
+        WHERE ab.batter = %s AND g.date __operator__ %s
+        ORDER BY g.date DESC LIMIT %s
+    '''
+    sql = sql.replace("__operator__", operator)
 
-    params = (batter_id, operator, date.strftime("%Y-%m-%d"), abs(count))
+    params = (batter_id, date.strftime("%Y-%m-%d"), abs(count))
 
     cur = conn.cursor(MySQLdb.cursors.DictCursor)
     cur.execute(sql, params)
