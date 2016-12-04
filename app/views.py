@@ -122,11 +122,7 @@ def player():
 
     split = pl.split_type(player_id)
 
-    p = {
-        "first_name": "Tyler",
-        "last_name": "Flowers",
-        "player_id": 452095
-    }
+    p = pl.get_player(player_id)
 
     i = injury.get_player_injuries(player_id)
 
