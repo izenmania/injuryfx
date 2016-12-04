@@ -120,10 +120,16 @@ def pitcher():
 def player():
     player_id = request.args.get("player_id")
 
-    split = pl.split_type(player_id)
-
     p = pl.get_player(player_id)
+    if p:
+        split = pl.split_type(player_id)
+        i = injury.get_player_injuries(player_id)
 
-    i = injury.get_player_injuries(player_id)
+        return render_template('player_injury_list.html', title='Player', player=p, injuries=i, split=split)
+    else:
+        return render_template('error.html', title='Player not found', message='No matching player was found.')
 
-    return render_template('player_injury_list.html', title='Player', player=p, injuries=i, split=split)
+
+@app.route('/error')
+def error():
+    return render_template('error.html', title='Error', message="This is an error message.")
