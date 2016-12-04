@@ -191,3 +191,14 @@ def pitcher_graphs():
     output.seek(0)
     return send_file(output, mimetype='image/png')
 
+@app.route('/injury/pitchselection')
+def pitch_selection():
+    injury_id = int(request.args.get("injury_id"))
+    window = int(request.args.get("window"))
+
+    inj = injury.get_injury(injury_id)
+    if inj:
+       return render_template('pitch_selection.html', title='Pitch Selection', window=window, player=inj)
+    else:
+       return render_template('error.html', title='Injury not found', message='No matching injury was found.')
+

@@ -6,3 +6,4 @@ data/*
 ifx/*
 */*.pyc
 *.pyc
+*.swp
