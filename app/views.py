@@ -194,7 +194,15 @@ def pitch_selection():
 
     inj = injury.get_injury(injury_id)
     if inj:
-       return render_template('pitch_selection.html', title='Pitch Selection', window=window, player=inj)
+
+       max_window_size = int(injury.get_max_pitch_window(injury_id))
+       if window > max_window_size:
+          window = max_window_size
+
+       if window > 0:
+          return render_template('pitch_selection.html', title='Pitch Selection', window=window, player=inj)
+       else: 
+          return render_template('error.html', title='Window too small.', message='Pitch selection could not be calculated because either a non-positive window was specified or the max window size is 0')
     else:
        return render_template('error.html', title='Injury not found', message='No matching injury was found.')
 
