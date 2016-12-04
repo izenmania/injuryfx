@@ -77,7 +77,7 @@ def get_pitches(player_id, date, count):
 def get_prepost_pitch_selection_histogram(injury_id, window):
     '''Create graph comparing of pitch selection before and after an injury'''
 
-    max_window_size = injury.get_max_pitch_window(injury_id)
+    max_window_size = int(injury.get_max_pitch_window(injury_id))
     if window > max_window_size:
         window = max_window_size
 

@@ -179,7 +179,7 @@ def error():
 @app.route('/graphs')
 def pitcher_graphs():
     injury_id = int(request.args.get("injury_id"))
-    window = request.args.get("window")
+    window = int(request.args.get("window"))
 
     # Create the image object
     fig = p.get_prepost_pitch_selection_histogram(injury_id, window)
