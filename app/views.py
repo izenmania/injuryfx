@@ -175,3 +175,19 @@ def player():
 @app.route('/error')
 def error():
     return render_template('error.html', title='Error', message="This is an error message.")
+
+
+@app.route('/graphs')
+def pitcher_graphs():
+    injury_id = int(request.args.get("injury_id"))
+    window = int(request.args.get("window"))
+
+    # Create the image object
+    fig = p.get_prepost_pitch_selection_histogram(injury_id, window)
+
+    # Create a fake file
+    canvas = FigureCanvas(fig)
+    output = StringIO.StringIO()
+    fig.savefig(output)
+    output.seek(0)
+    return send_file(output, mimetype='image/png')
