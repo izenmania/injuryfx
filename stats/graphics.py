@@ -5,6 +5,8 @@ import matplotlib
 # Force matplotlib to not use any Xwindows backend.
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+import StringIO
 
 
 def generate_heatmap(coords):
@@ -61,8 +63,8 @@ def get_pitch_count_list(pitch_types, pitches_df):
 
     return counts
 
-def create_bar_chart(pre_pitches_df, post_pitches_df, injury_id, window_size):
-    'Create graph comparing pre injury pitch and post injury pitch selection'
+def create_bar_chart(pre_pitches_df, post_pitches_df, window_size):
+    'Create graph comparing pre and post injury pitch pitch selection'
     fig, ax = plt.subplots()
     x = list(set(pre_pitches_df["pitch_type"]) | set(post_pitches_df["pitch_type"]))
     n_groups = len(x)
@@ -80,9 +82,15 @@ def create_bar_chart(pre_pitches_df, post_pitches_df, injury_id, window_size):
     plt.ylabel('Count')
     plt.xticks(index + bar_width, x)
     plt.legend()
-    plt.title('Pitch Selection. injury_id = ' + str(injury_id) + "; window size = " + str(window_size))
+    plt.title("Pitch Selection. Window size = " + str(window_size))
+
+    return fig
 
 
-    fig.savefig("/home/ubuntu/injuryfx/app/static/graphs/" + str(injury_id) + "-" +
-                str(window_size) + ".png") 
-
+def generate_fake_file(fig):
+    # Create a fake file
+    canvas = FigureCanvas(fig)
+    output = StringIO.StringIO()
+    fig.savefig(output)
+    output.seek(0)
+    return output

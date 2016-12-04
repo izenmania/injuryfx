@@ -58,59 +58,22 @@ def postplot():
     output.seek(0)
     return send_file(output, mimetype='image/png')
 
-@app.route('/injury/batter')
-def batter():
-    inj_id = request.args.get("inj_id")
-    window = request.args.get("window")
-
-    inj = injury.get_injury(inj_id)
-
-    if inj:
-        s = b.prepost_aggregate_stats(int(inj_id), int(window))
-
-        pre = {
-            "stats": "Slash Line: "+b.slash_line(s["pre"]),
-            "image_path": "/static/images/figure_1.png"
-        }
-        post = {
-            "stats": "Slash Line: "+b.slash_line(s["post"]),
-            "image_path": "/static/images/figure_1.png"
-        }
-
-        return render_template('prepost.html', title='Batter', pre=pre, post=post, player=inj)
-
-    else:
-        return render_template('error.html', title='Injury not found.', message='No matching injury was found.')
-
-
-@app.route('/injury/pitcher')
-def pitcher():
-    inj_id = request.args.get("inj_id")
-    window = request.args.get("window")
-
-    inj = injury.get_injury(inj_id)
-
-    if inj:
-        s = p.prepost_aggregate_opp_stats(int(inj_id), int(window))
-
-        pre = {
-            "stats": "Opposing Slash Line: "+b.slash_line(s["pre"]),
-            "image_path": "/static/images/figure_1.png"
-        }
-        post = {
-            "stats": "Opposing Slash Line: "+b.slash_line(s["post"]),
-            "image_path": "/static/images/figure_1.png"
-        }
-
-        return render_template('prepost.html', title='Pitcher', pre=pre, post=post, player=inj)
-
-    else:
-        return render_template('error.html', title='Injury not found.', message='No matching injury was found.')
-
 
 @app.route('/injury/pitches')
 def injury_pitches():
-    pass
+    inj_id = request.args.get("inj_id")
+    window = request.args.get("window")
+
+    inj = injury.get_injury(inj_id)
+
+    if inj:
+        player_type = pl.split_type(inj["player_id_mlbam"])
+        pre = {}
+        post = {}
+
+        return render_template('prepost.html', title='Pitch Location', pre=pre, post=post, player=inj)
+    else:
+        return render_template('error.html', title='Injury not found.', message='No matching injury was found.')
 
 
 @app.route('/injury/atbats')
@@ -122,30 +85,31 @@ def injury_atbats():
 
     if inj:
         player_type = pl.split_type(inj["player_id_mlbam"])
-        if player_type == "batter":
-            s = b.prepost_aggregate_stats(int(inj_id), int(window))
+        s = pl.prepost_aggregate_stats(int(inj_id), int(window))
 
-            pre = {
-                "stats": "Slash Line: " + b.slash_line(s["pre"]),
-                "image_path": "/static/images/figure_1.png"
-            }
-            post = {
-                "stats": "Slash Line: " + b.slash_line(s["post"]),
-                "image_path": "/static/images/figure_1.png"
-            }
+        if s["pre"] and s["post"]:
+            if player_type == "batter":
+                pre = {
+                    "stats": "Slash Line: " + pl.slash_line(s["pre"]),
+                    "image_path": "/static/images/figure_1.png"
+                }
+                post = {
+                    "stats": "Slash Line: " + pl.slash_line(s["post"]),
+                    "image_path": "/static/images/figure_1.png"
+                }
+            else:
+                pre = {
+                    "stats": "Opposing Slash Line: " + pl.slash_line(s["pre"]),
+                    "image_path": "/static/images/figure_1.png"
+                }
+                post = {
+                    "stats": "Opposing Slash Line: " + pl.slash_line(s["post"]),
+                    "image_path": "/static/images/figure_1.png"
+                }
+
+            return render_template('prepost.html', title='At Bats', pre=pre, post=post, player=inj)
         else:
-            s = p.prepost_aggregate_opp_stats(int(inj_id), int(window))
-
-            pre = {
-                "stats": "Opposing Slash Line: " + b.slash_line(s["pre"]),
-                "image_path": "/static/images/figure_1.png"
-            }
-            post = {
-                "stats": "Opposing Slash Line: " + b.slash_line(s["post"]),
-                "image_path": "/static/images/figure_1.png"
-            }
-
-        return render_template('prepost.html', title='Injury', pre=pre, post=post, player=inj)
+            return render_template('error.html', title='Insufficient data', message='Insufficient data for this query.')
     else:
         return render_template('error.html', title='Injury not found.', message='No matching injury was found.')
 
@@ -158,10 +122,10 @@ def player():
     if player_id:
         p = pl.get_player(player_id)
         if p:
-            split = pl.split_type(player_id)
+            player_type = pl.split_type(player_id)
             i = injury.get_player_injuries(player_id)
 
-            return render_template('player_injury_list.html', title='Player', player=p, injuries=i, split=split)
+            return render_template('player_injury_list.html', title='Player', player=p, injuries=i, player_type=player_type)
         else:
             return render_template('error.html', title='Player not found', message='No matching player was found.')
     else:
@@ -174,3 +138,34 @@ def player():
 @app.route('/error')
 def error():
     return render_template('error.html', title='Error', message="This is an error message.")
+
+
+@app.route('/graphs/pitchselection')
+def graph_pitch_selection():
+    injury_id = int(request.args.get("injury_id"))
+    window = int(request.args.get("window"))
+
+    # Create the image object
+    fig = p.get_prepost_pitch_selection_histogram(injury_id, window)
+
+    return send_file(graphics.generate_fake_file(fig), mimetype='image/png')
+
+@app.route('/injury/pitchselection')
+def pitch_selection():
+    injury_id = int(request.args.get("injury_id"))
+    window = int(request.args.get("window"))
+
+    inj = injury.get_injury(injury_id)
+    if inj:
+
+       max_window_size = int(injury.get_max_pitch_window(injury_id))
+       if window > max_window_size:
+          window = max_window_size
+
+       if window > 0:
+          return render_template('pitch_selection.html', title='Pitch Selection', window=window, player=inj)
+       else: 
+          return render_template('error.html', title='Window too small.', message='Pitch selection could not be calculated because either a non-positive window was specified or the max window size is 0')
+    else:
+       return render_template('error.html', title='Injury not found', message='No matching injury was found.')
+

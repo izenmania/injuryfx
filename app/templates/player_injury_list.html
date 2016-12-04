@@ -5,17 +5,22 @@
 {% block content %}
     {% for inj in injuries %}
     <p>
-        {{ inj['injury'] }} ({{ ",".join(inj['parts']) }}) •
+        {% if inj['injury'] %}
+            {{ inj['injury'] }} ({{ ",".join(inj['parts']) }}) •
+        {% else %}
+            <i>No injury details</i> •
+        {% endif %}
         {{ inj['dl_type'] }} disabled list •
         {{ inj['start_date'].strftime("%m/%d/%Y") }}-{{ inj['end_date'].strftime("%m/%d/%Y") }}<br />
         Splits:
-        <a href="/injury/{{ split }}?inj_id={{ inj['injury_id'] }}&window=50">
-            {% if split == 'batter' %}
-                Batting
-            {% else %}
-                Pitching
-            {% endif %}
-        </a>
+        {% if player_type == "batter" %}
+            <a href="/injury/atbats?inj_id={{ inj['injury_id'] }}&window=50">At Bats</a> •
+            <a href="/injury/pitches?inj_id={{ inj['injury_id'] }}&window=50">Swing Rates</a>
+        {% elif player_type == "pitcher" %}
+            <a href="/injury/atbats?inj_id={{ inj['injury_id'] }}&window=50">At Bats</a> •
+            <a href="/injury/pitches?inj_id={{ inj['injury_id'] }}&window=50">Pitch Location</a> •
+            <a href="/injury/pitchselection?injury_id={{ inj['injury_id'] }}&window=50">Pitch Selection</a>
+        {% endif %}
     </p>
     {% endfor %}
 {% endblock %}

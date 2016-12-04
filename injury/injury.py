@@ -129,7 +129,7 @@ def get_injury(inj_id, columns=""):
             "team_id_mlbam": res[2],
             "injury": res[3],
             "side": res[4],
-            "parts": json.loads(res[5]),
+            "parts": json.loads(res[5]) if res[5] else "",
             "dl_type": res[6],
             "start_date": res[7],
             "end_date": res[8],
@@ -168,16 +168,13 @@ def get_player_injuries(player_id):
 
     list = []
     for row in cur:
-        row['parts'] = json.loads(row['parts'])
+        row['parts'] = json.loads(row['parts']) if row['parts'] else ""
         list.append(row)
 
     return list
 
-def _get_max_event_window(injury_id, player_type, break_on_off_season=False):
-    '''Calculate the maximum window size on each side of an injury for a player.
-    The borders are either defined as another injury or the break in a season
-    iif break_on_off_season == TRUE (TODO, make season break actually happen)
-    '''
+def _get_window_boundaries(injury_id, break_on_off_season=False):
+    'Calculate max date boundaries around an injury.'
 
     conn = connect.open()
 
@@ -210,34 +207,44 @@ def _get_max_event_window(injury_id, player_type, break_on_off_season=False):
 
     # determine injury date as well as prior and next injury date if they exist
     # otherwise set boundaries outside of the data time frames
-    prior_injury_date = '0000/00/00'
-    next_injury_date = '9999/99/99'
-    current_injury_date = None
-    player_id = None
+    boundaries = { "prior_injury_date" : '0000/00/00',
+                   "next_injury_date" : '9999/99/99',
+                   "current_injury" : None }
+
     for i, injury in enumerate(injuries):
         if injury["injury_id"] == injury_id:
             if i > 0:
-                prior_injury_date = injuries[i-1]["start_date"]
+                boundaries["prior_injury_date"] = injuries[i-1]["start_date"]
             if i < len(injuries) - 1:
-                next_injury_date = injuries[i+1]["start_date"]
-            current_injury_date = injury["start_date"]
-            player_id = injury["player_id_mlbam"]
+                boundaries["next_injury_date"] = injuries[i+1]["start_date"]
+            boundaries["current_injury"] = injury
             break
 
+    return boundaries
 
+def get_max_atbat_window(injury_id, break_on_off_season=False):
+    '''Calculate the maximum window size on each side of an injury for a batter.
+    The borders are either defined as another injury or the break in a season
+    if break_on_off_season == TRUE (TODO, make season break actually happen)
+    '''
+
+    boundaries = _get_window_boundaries(injury_id, break_on_off_season)
+
+    current_injury_date = boundaries["current_injury"]["start_date"]
+    player_id = boundaries["current_injury"]["player_id_mlbam"]
+
+    conn = connect.open()
     # get total number of events before injury and with lower boundary
     prior_at_bats_sql = '''
     select count(*) total_prior_at_bats
     from gameday.atbat
-    where _player_type_ = %s
+    where batter = %s
     and substring(game_id, 1, 10) <= %s
     and substring(game_id, 1, 10) >= %s
     order by game_id, event_num;
     '''
-
-    prior_at_bats_sql = prior_at_bats_sql.replace("_player_type_", player_type)
     
-    params = (player_id, current_injury_date, prior_injury_date)
+    params = (player_id, current_injury_date, boundaries["prior_injury_date"])
     cur = conn.cursor()
     cur.execute(prior_at_bats_sql, params)
 
@@ -247,15 +254,13 @@ def _get_max_event_window(injury_id, player_type, break_on_off_season=False):
     post_at_bats_sql = '''
     select count(*) total_prior_at_bats
     from gameday.atbat
-    where _player_type_ = %s
+    where batter = %s
     and substring(game_id, 1, 10) > %s
     and substring(game_id, 1, 10) < %s
     order by game_id, event_num;
     '''
 
-    post_at_bats_sql = post_at_bats_sql.replace("_player_type_", player_type)
-
-    params = (player_id, current_injury_date, next_injury_date)
+    params = (player_id, current_injury_date, boundaries["next_injury_date"])
     cur = conn.cursor()
     cur.execute(post_at_bats_sql, params)
 
@@ -267,16 +272,49 @@ def _get_max_event_window(injury_id, player_type, break_on_off_season=False):
     return max_window
 
 
-def get_max_atbat_window(injury_id, break_on_off_season=False):
-    '''Calculate the maximum window size on each side of an injury for a batter.
-    The borders are either defined as another injury or the break in a season
-    iif break_on_off_season == TRUE (TODO, make season break actually happen)
-    '''
-    return _get_max_event_window(injury_id, "batter", break_on_off_season)
-
 def get_max_pitch_window(injury_id, break_on_off_season=False):
     '''Calculate the maximum window size on each side of an injury for a pitcher.
     The borders are either defined as another injury or the break in a season
     iif break_on_off_season == TRUE (TODO, make season break actually happen)
     '''
-    return _get_max_event_window(injury_id, "pitcher", break_on_off_season)
+    boundaries = _get_window_boundaries(injury_id, break_on_off_season)
+
+    current_injury_date = boundaries["current_injury"]["start_date"]
+    player_id = boundaries["current_injury"]["player_id_mlbam"]
+
+    conn = connect.open()
+    # get total number of events before injury and with lower boundary
+    prior_at_bats_sql = '''
+    select count(*) total_prior_pitches
+    from gameday.pitch
+    where pitcher = %s
+    and substring(game_id, 1, 10) <= %s
+    and substring(game_id, 1, 10) >= %s
+    '''
+    
+    params = (player_id, current_injury_date, boundaries["prior_injury_date"])
+    cur = conn.cursor()
+    cur.execute(prior_at_bats_sql, params)
+
+    prior_count = cur.fetchone()[0]
+
+    # get total number of events after injury and with upper boundary
+    post_at_bats_sql = '''
+    select count(*) total_prior_pitches
+    from gameday.pitch
+    where pitcher = %s
+    and substring(game_id, 1, 10) > %s
+    and substring(game_id, 1, 10) < %s
+    '''
+
+    params = (player_id, current_injury_date, boundaries["next_injury_date"])
+    cur = conn.cursor()
+    cur.execute(post_at_bats_sql, params)
+
+    post_count = cur.fetchone()[0]
+    
+    # return the smaller of these as the maximum window size
+    max_window = min([post_count, prior_count])
+
+    return max_window
+
