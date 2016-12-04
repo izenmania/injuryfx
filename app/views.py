@@ -58,59 +58,22 @@ def postplot():
     output.seek(0)
     return send_file(output, mimetype='image/png')
 
-@app.route('/injury/batter')
-def batter():
-    inj_id = request.args.get("inj_id")
-    window = request.args.get("window")
-
-    inj = injury.get_injury(inj_id)
-
-    if inj:
-        s = pl.prepost_aggregate_stats(int(inj_id), int(window))
-
-        pre = {
-            "stats": "Slash Line: "+b.slash_line(s["pre"]),
-            "image_path": "/static/images/figure_1.png"
-        }
-        post = {
-            "stats": "Slash Line: "+b.slash_line(s["post"]),
-            "image_path": "/static/images/figure_1.png"
-        }
-
-        return render_template('prepost.html', title='Batter', pre=pre, post=post, player=inj)
-
-    else:
-        return render_template('error.html', title='Injury not found.', message='No matching injury was found.')
-
-
-@app.route('/injury/pitcher')
-def pitcher():
-    inj_id = request.args.get("inj_id")
-    window = request.args.get("window")
-
-    inj = injury.get_injury(inj_id)
-
-    if inj:
-        s = pl.prepost_aggregate_opp_stats(int(inj_id), int(window))
-
-        pre = {
-            "stats": "Opposing Slash Line: "+b.slash_line(s["pre"]),
-            "image_path": "/static/images/figure_1.png"
-        }
-        post = {
-            "stats": "Opposing Slash Line: "+b.slash_line(s["post"]),
-            "image_path": "/static/images/figure_1.png"
-        }
-
-        return render_template('prepost.html', title='Pitcher', pre=pre, post=post, player=inj)
-
-    else:
-        return render_template('error.html', title='Injury not found.', message='No matching injury was found.')
-
 
 @app.route('/injury/pitches')
 def injury_pitches():
-    pass
+    inj_id = request.args.get("inj_id")
+    window = request.args.get("window")
+
+    inj = injury.get_injury(inj_id)
+
+    if inj:
+        player_type = pl.split_type(inj["player_id_mlbam"])
+        pre = {}
+        post = {}
+
+        return render_template('prepost.html', title='Pitch Location', pre=pre, post=post, player=inj)
+    else:
+        return render_template('error.html', title='Injury not found.', message='No matching injury was found.')
 
 
 @app.route('/injury/atbats')
@@ -144,7 +107,7 @@ def injury_atbats():
                     "image_path": "/static/images/figure_1.png"
                 }
 
-            return render_template('prepost.html', title='Injury', pre=pre, post=post, player=inj)
+            return render_template('prepost.html', title='At Bats', pre=pre, post=post, player=inj)
         else:
             return render_template('error.html', title='Insufficient data', message='Insufficient data for this query.')
     else:
