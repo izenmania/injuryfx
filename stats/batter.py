@@ -93,27 +93,30 @@ def get_atbats(batter_id, date, count, columns=()):
 
 
 def aggregate_stats(stats):
-    agg = {
-        "AB": stats["AB"].sum(),
-        "PA": stats["PA"].sum(),
-        "1B": stats["1B"].sum(),
-        "2B": stats["2B"].sum(),
-        "3B": stats["3B"].sum(),
-        "HR": stats["HR"].sum(),
-        "BB": stats["BB"].sum(),
-        "IBB": stats["IBB"].sum(),
-        "SO": stats["SO"].sum(),
-        "SH": stats["SH"].sum(),
-        "SF": stats["SF"].sum(),
-        "HBP": stats["HBP"].sum(),
-    }
+    if len(stats) > 0:
+        agg = {
+            "AB": stats["AB"].sum(),
+            "PA": stats["PA"].sum(),
+            "1B": stats["1B"].sum(),
+            "2B": stats["2B"].sum(),
+            "3B": stats["3B"].sum(),
+            "HR": stats["HR"].sum(),
+            "BB": stats["BB"].sum(),
+            "IBB": stats["IBB"].sum(),
+            "SO": stats["SO"].sum(),
+            "SH": stats["SH"].sum(),
+            "SF": stats["SF"].sum(),
+            "HBP": stats["HBP"].sum(),
+        }
 
-    agg["AVG"] = round(float(agg["1B"]+agg["2B"]+agg["3B"]+agg["HR"])/float(agg["AB"]), 3)
-    agg["OBP"] = round(float(agg["1B"]+agg["2B"]+agg["3B"]+agg["HR"]+agg["BB"]+agg["IBB"]+agg["HBP"])/float(agg["PA"]), 3)
-    agg["SLG"] = round(float(agg["1B"]+2*agg["2B"]+3*agg["3B"]+4*agg["HR"])/float(agg["AB"]), 3)
-    agg["OPS"] = agg["OBP"] + agg["SLG"]
+        agg["AVG"] = round(float(agg["1B"]+agg["2B"]+agg["3B"]+agg["HR"])/float(agg["AB"]), 3)
+        agg["OBP"] = round(float(agg["1B"]+agg["2B"]+agg["3B"]+agg["HR"]+agg["BB"]+agg["IBB"]+agg["HBP"])/float(agg["PA"]), 3)
+        agg["SLG"] = round(float(agg["1B"]+2*agg["2B"]+3*agg["3B"]+4*agg["HR"])/float(agg["AB"]), 3)
+        agg["OPS"] = agg["OBP"] + agg["SLG"]
 
-    return agg
+        return agg
+    else:
+        return None
 
 
 def aggregatable_stats_window(batter_id, date, count):

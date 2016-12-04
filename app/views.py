@@ -145,7 +145,10 @@ def injury_atbats():
                 "image_path": "/static/images/figure_1.png"
             }
 
-        return render_template('prepost.html', title='Injury', pre=pre, post=post, player=inj)
+        if s:
+            return render_template('prepost.html', title='Injury', pre=pre, post=post, player=inj)
+        else:
+            return render_template('error.html', title='Insufficient data', message='Insufficient data for this query.')
     else:
         return render_template('error.html', title='Injury not found.', message='No matching injury was found.')
 
