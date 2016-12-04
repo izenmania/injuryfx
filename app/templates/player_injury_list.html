@@ -13,13 +13,8 @@
         {{ inj['dl_type'] }} disabled list •
         {{ inj['start_date'].strftime("%m/%d/%Y") }}-{{ inj['end_date'].strftime("%m/%d/%Y") }}<br />
         Splits:
-        <a href="/injury/{{ split }}?inj_id={{ inj['injury_id'] }}&window=50">
-            {% if split == 'batter' %}
-                Batting
-            {% else %}
-                Pitching
-            {% endif %}
-        </a>
+        <a href="/injury/atbats?inj_id={{ inj['injury_id'] }}&window=50">At Bats</a> •
+        <a href="/injury/pitches?inj_id={{ inj['injury_id'] }}&window=50">Pitches</a>
     </p>
     {% endfor %}
 {% endblock %}

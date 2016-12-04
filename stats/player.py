@@ -106,7 +106,7 @@ def aggregatable_stats_window(player_id, date, count, player_type=""):
             date __operator__ '%s'
         ORDER BY game_id, inning, num
         LIMIT %s
-    ''' % (player_id, date, count)
+    ''' % (player_id, date, abs(count))
 
     sql = sql.replace("__type__", player_type).replace("__operator__", operator)
 
