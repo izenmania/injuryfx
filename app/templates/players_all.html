@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="w3-container w3-padding-128 w3-center" id="splits">
+        <div style="width: 50%; float: left; padding: 50px">
+            <h3>
+                Pitchers
+            </h3>
+            <div>
+                •
+                {% for p in pitchers %}
+                    <a href="/player?player_id={{ p["id"] }}">{{ p["first_name"] }} {{ p["last_name"] }}</a> •
+                {% endfor %}
+            </div>
+        </div>
+        <div style="width: 50%; float: left; padding: 50px">
+            <h3>
+                Batters
+            </h3>
+            <div>
+                •
+                {% for b in batters %}
+                    <a href="/player?player_id={{ b["id"] }}">{{ b["first_name"] }} {{ b["last_name"] }}</a> •
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

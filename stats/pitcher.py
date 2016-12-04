@@ -2,7 +2,7 @@ from db import connect
 from injury import injury
 import numpy
 import pandas
-import batter
+import batter, graphics
 
 def heatmap_coordinates(inj_id, window):
     # TODO: Provide a list of two sets of coordinates to be passed to graphics.generate_heatmap
@@ -50,3 +50,51 @@ def aggregatable_stats_window(pitcher_id, date, count):
           % (pitcher_id, operator, date.strftime("%Y-%m-%d"), abs(count))
 
     return pandas.read_sql_query(sql, conn)
+
+
+
+
+
+
+def get_pitches(player_id, date, count):
+    conn = connect.sqlalchemy_open()
+
+    if count < 0:
+        operator = "<"
+    else:
+        operator = ">="
+    sql = '''select pitch_type, count(game_id) pitch_count
+             from (select game_id, pitch_type
+                   from gameday.pitch 
+                   where pitcher = %s
+                   and substring(game_id, 1, 10) %s '%s'
+                   LIMIT %s) p
+             group by p.pitch_type''' \
+                 % (player_id, operator, date.strftime("%Y/%m/%d"), abs(count))
+
+    return pandas.read_sql_query(sql, conn)
+
+
+def create_prepost_pitch_selection_histograms(injury_id, window):
+    '''Create histograms of pitch selection before and after an injury'''
+
+    max_window_size = injury.get_max_pitch_window(injury_id)
+    if window > max_window_size:
+        window = max_window_size
+
+    inj = injury.get_injury(injury_id)
+    pre = get_pitches(inj["player_id_mlbam"], inj["start_date"], window*-1)
+    post = get_pitches(inj["player_id_mlbam"], inj["start_date"], window)
+
+    print "pre:"
+    for row in pre.iterrows():
+        print row[1]["pitch_type"], "=", row[1]["pitch_count"]
+
+    print "\npost:"
+    for row in post.iterrows():
+        print row[1]["pitch_type"], "=", row[1]["pitch_count"]
+
+
+    graphics.create_bar_chart(pre, post, injury_id, window)
+
+

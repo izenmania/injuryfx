@@ -158,6 +158,7 @@ def get_player_injuries(player_id):
         FROM injuryfx.injuries i
             INNER JOIN gameday.player p ON p.id = i.player_id_mlbam
         WHERE i.player_id_mlbam = %s
+		AND i.end_date IS NOT NULL
         ORDER BY i.start_date DESC
     '''
     params = (player_id, )
