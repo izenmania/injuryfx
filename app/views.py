@@ -159,10 +159,10 @@ def player():
     if player_id:
         p = pl.get_player(player_id)
         if p:
-            split = pl.split_type(player_id)
+            player_type = pl.split_type(player_id)
             i = injury.get_player_injuries(player_id)
 
-            return render_template('player_injury_list.html', title='Player', player=p, injuries=i, split=split)
+            return render_template('player_injury_list.html', title='Player', player=p, injuries=i, player_type=player_type)
         else:
             return render_template('error.html', title='Player not found', message='No matching player was found.')
     else:
