@@ -79,7 +79,7 @@ def get_atbats(batter_id, date, count, columns=()):
 
     conn = connect.open()
 
-    sql = '''SELECT game.date, atbat.event FROM game JOIN atbat ON game.game_id=atbat.game_id WHERE atbat.batter = %s AND game.date %s '%s' ORDER BY game.date DESC LIMIT %s'''
+    sql = '''SELECT game.date, atbat.event FROM game JOIN atbat ON game.game_id=atbat.game_id WHERE atbat.pitcher = %s AND game.date %s '%s' ORDER BY game.date DESC LIMIT %s'''
 
     params = (batter_id, operator, date.strftime("%Y-%m-%d"), abs(count))
 
