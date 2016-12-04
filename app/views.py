@@ -177,8 +177,8 @@ def error():
     return render_template('error.html', title='Error', message="This is an error message.")
 
 
-@app.route('/graphs')
-def pitcher_graphs():
+@app.route('/graphs/pitchselection')
+def graph_pitch_selection():
     injury_id = int(request.args.get("injury_id"))
     window = int(request.args.get("window"))
 
