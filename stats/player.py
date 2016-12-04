@@ -3,6 +3,7 @@ from db import query
 from injury import injury
 import MySQLdb
 import pandas
+import pitcher, batter
 
 # Determines if a player's most useful splits are pitching or batting
 def split_type(player_id):
@@ -131,3 +132,13 @@ def slash_line(agg_stats):
     return "/".join((format(agg_stats["AVG"], '.3f').lstrip("0"),
                      format(agg_stats["OBP"], '.3f').lstrip("0"),
                      format(agg_stats["SLG"], '.3f').lstrip("0")))
+
+
+def get_pitches(player_id, date, count, columns=(), result="", player_type=""):
+    if player_type not in ["pitcher", "batter"]:
+        player_type = split_type(player_id)
+
+    if player_type == "batter":
+        return batter.get_pitches(player_id, date, count, columns, result)
+    else:
+        return pitcher.get_pitches(player_id, date, count, columns)

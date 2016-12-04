@@ -45,7 +45,7 @@ def get_pitches(batter_id, date, count, columns=(), result=""):
     conn = connect.open()
 
     sql = '''
-        SELECT p.px AS x, p.py AS y
+        SELECT p.px AS x, p.pz AS y
         FROM gameday.game g
             INNER JOIN  gameday.pitch p ON g.game_id=p.game_id
         WHERE p.batter = %s AND g.date __operator__ %s

@@ -3,6 +3,7 @@ from injury import injury
 import numpy
 import pandas
 import batter, graphics
+import MySQLdb
 
 def heatmap_coordinates(inj_id, window):
     # TODO: Provide a list of two sets of coordinates to be passed to graphics.generate_heatmap
@@ -35,8 +36,16 @@ def get_pitches(pitcher_id, date, count, columns=()):
 
     conn = connect.open()
 
-    sql = '''SELECT pitch.x, pitch.y FROM game JOIN pitch ON game.game_id=pitch.game_id WHERE pitch.pitcher = %s AND game.date %s '%s' ORDER BY game.date DESC LIMIT %s'''
-    params =  (pitcher_id, operator, date.strftime("%Y-%m-%d"), abs(count))
+    sql = '''
+        SELECT p.px AS x, p.pz AS y
+        FROM gameday.game g
+            INNER JOIN gameday.pitch p ON g.game_id=p.game_id
+        WHERE p.pitcher = %s AND
+            g.date __operator__ %s
+        ORDER BY g.date DESC LIMIT %s'''
+    sql = sql.replace("__operator__", operator)
+
+    params =  (pitcher_id, date.strftime("%Y-%m-%d"), abs(count))
 
     cur = conn.cursor(MySQLdb.cursors.DictCursor)
     cur.execute(sql, params)
@@ -96,11 +105,7 @@ def aggregatable_stats_window(pitcher_id, date, count):
     return pandas.read_sql_query(sql, conn)
 
 
-
-
-
-
-def get_pitches(player_id, date, count):
+def get_pitch_types(player_id, date, count):
     conn = connect.sqlalchemy_open()
 
     if count < 0:
@@ -127,8 +132,8 @@ def create_prepost_pitch_selection_histograms(injury_id, window):
         window = max_window_size
 
     inj = injury.get_injury(injury_id)
-    pre = get_pitches(inj["player_id_mlbam"], inj["start_date"], window*-1)
-    post = get_pitches(inj["player_id_mlbam"], inj["start_date"], window)
+    pre = get_pitch_types(inj["player_id_mlbam"], inj["start_date"], window*-1)
+    post = get_pitch_types(inj["player_id_mlbam"], inj["start_date"], window)
 
     print "pre:"
     for row in pre.iterrows():
