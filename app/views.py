@@ -99,22 +99,24 @@ def pitcher():
     window = request.args.get("window")
 
     inj = injury.get_injury(inj_id)
-    s = p.prepost_aggregate_opp_stats(int(inj_id), int(window))
 
-    pre = {
-        "stats": "Opposing Slash Line: "+b.slash_line(s["pre"]),
-        "image_path": "/static/images/figure_1.png"
-    }
-    post = {
-        "stats": "Opposing Slash Line: "+b.slash_line(s["post"]),
-        "image_path": "/static/images/figure_1.png"
-    }
+    if inj:
+        s = p.prepost_aggregate_opp_stats(int(inj_id), int(window))
 
-    return render_template('prepost.html', title='Pitcher', pre=pre, post=post, player=inj)
+        pre = {
+            "stats": "Opposing Slash Line: "+b.slash_line(s["pre"]),
+            "image_path": "/static/images/figure_1.png"
+        }
+        post = {
+            "stats": "Opposing Slash Line: "+b.slash_line(s["post"]),
+            "image_path": "/static/images/figure_1.png"
+        }
 
+        return render_template('prepost.html', title='Pitcher', pre=pre, post=post, player=inj)
 
+    else:
+        return render_template('error.html', title='Injury not found.', message='No matching injury was found.')
 
-#[{'dl_type': '60-day', 'first_name': 'Tyler', 'last_name': 'Flowers', 'end_date': datetime.date(2013, 10, 24), 'start_date': datetime.date(2013, 9, 3), 'parts': [u'shoulder'], 'injury_id': 11957L, 'team_id_mlbam': 145L, 'injury': 'right shoulder surgery', 'side': 'right', 'player_id_mlbam': 452095L}, {'dl_type': '15-day', 'first_name': 'Tyler', 'last_name': 'Flowers', 'end_date': datetime.date(2016, 8, 17), 'start_date': datetime.date(2016, 7, 10), 'parts': [u'hand'], 'injury_id': 13330L, 'team_id_mlbam': 144L, 'injury': 'fractured left hand', 'side': 'left', 'player_id_mlbam': 452095L}]
 
 @app.route('/player')
 def player():
