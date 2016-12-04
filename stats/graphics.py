@@ -80,7 +80,7 @@ def create_bar_chart(pre_pitches_df, post_pitches_df, injury_id, window_size):
     plt.ylabel('Count')
     plt.xticks(index + bar_width, x)
     plt.legend()
-    plt.title('Pitch Types. injury_id = ' + str(injury_id) + "; window size = " + str(window_size))
+    plt.title('Pitch Selection. injury_id = ' + str(injury_id) + "; window size = " + str(window_size))
 
 
     fig.savefig("/home/ubuntu/injuryfx/app/static/graphs/" + str(injury_id) + "-" +
