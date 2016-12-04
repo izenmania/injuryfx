@@ -266,14 +266,14 @@ def _get_max_event_window(injury_id, player_type, break_on_off_season=False):
     return max_window
 
 
-def max_atbat_window(injury_id, break_on_off_season=False):
+def get_max_atbat_window(injury_id, break_on_off_season=False):
     '''Calculate the maximum window size on each side of an injury for a batter.
     The borders are either defined as another injury or the break in a season
     iif break_on_off_season == TRUE (TODO, make season break actually happen)
     '''
     return _get_max_event_window(injury_id, "batter", break_on_off_season)
 
-def max_pitch_window(injury_id, break_on_off_season=False):
+def get_max_pitch_window(injury_id, break_on_off_season=False):
     '''Calculate the maximum window size on each side of an injury for a pitcher.
     The borders are either defined as another injury or the break in a season
     iif break_on_off_season == TRUE (TODO, make season break actually happen)
