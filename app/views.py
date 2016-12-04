@@ -122,30 +122,31 @@ def injury_atbats():
 
     if inj:
         player_type = pl.split_type(inj["player_id_mlbam"])
-        if player_type == "batter":
-            s = b.prepost_aggregate_stats(int(inj_id), int(window))
-
-            pre = {
-                "stats": "Slash Line: " + b.slash_line(s["pre"]),
-                "image_path": "/static/images/figure_1.png"
-            }
-            post = {
-                "stats": "Slash Line: " + b.slash_line(s["post"]),
-                "image_path": "/static/images/figure_1.png"
-            }
-        else:
-            s = p.prepost_aggregate_opp_stats(int(inj_id), int(window))
-
-            pre = {
-                "stats": "Opposing Slash Line: " + b.slash_line(s["pre"]),
-                "image_path": "/static/images/figure_1.png"
-            }
-            post = {
-                "stats": "Opposing Slash Line: " + b.slash_line(s["post"]),
-                "image_path": "/static/images/figure_1.png"
-            }
+        s = pl.prepost_aggregate_stats(int(inj_id), int(window))
 
         if s:
+            if player_type == "batter":
+
+                pre = {
+                    "stats": "Slash Line: " + pl.slash_line(s["pre"]),
+                    "image_path": "/static/images/figure_1.png"
+                }
+                post = {
+                    "stats": "Slash Line: " + pl.slash_line(s["post"]),
+                    "image_path": "/static/images/figure_1.png"
+                }
+            else:
+                s = p.prepost_aggregate_opp_stats(int(inj_id), int(window))
+
+                pre = {
+                    "stats": "Opposing Slash Line: " + pl.slash_line(s["pre"]),
+                    "image_path": "/static/images/figure_1.png"
+                }
+                post = {
+                    "stats": "Opposing Slash Line: " + pl.slash_line(s["post"]),
+                    "image_path": "/static/images/figure_1.png"
+                }
+
             return render_template('prepost.html', title='Injury', pre=pre, post=post, player=inj)
         else:
             return render_template('error.html', title='Insufficient data', message='Insufficient data for this query.')

@@ -1,6 +1,7 @@
 from db import connect
 from db import query
 from injury import injury
+import player
 from datetime import datetime
 import numpy
 import pandas
@@ -30,19 +31,6 @@ def prepost_heatmap_coordinates(inj_id, window, result=""):
     post_inj = get_pitchs(plyr_id, end_dte, window)
 
     return pre_inj, post_inj
-
-
-def prepost_aggregate_stats(inj_id, window):
-    # Retrieve the injury details
-    inj = injury.get_injury(inj_id)
-
-    # Generate aggregate stats for window days before and after the injury
-    stats = {
-        "pre": aggregate_stats(aggregatable_stats_window(inj["player_id_mlbam"], inj["start_date"], window*-1)),
-        "post": aggregate_stats(aggregatable_stats_window(inj["player_id_mlbam"], inj["end_date"], window))
-    }
-
-    return stats
 
 
 def get_pitches(batter_id, date, count, columns=(), result=""):
@@ -89,51 +77,3 @@ def get_atbats(batter_id, date, count, columns=()):
     return_list = list(cur.fetchall())
 
     return return_list
-
-
-
-def aggregate_stats(stats):
-    if len(stats) > 0:
-        agg = {
-            "AB": stats["AB"].sum(),
-            "PA": stats["PA"].sum(),
-            "1B": stats["1B"].sum(),
-            "2B": stats["2B"].sum(),
-            "3B": stats["3B"].sum(),
-            "HR": stats["HR"].sum(),
-            "BB": stats["BB"].sum(),
-            "IBB": stats["IBB"].sum(),
-            "SO": stats["SO"].sum(),
-            "SH": stats["SH"].sum(),
-            "SF": stats["SF"].sum(),
-            "HBP": stats["HBP"].sum(),
-        }
-
-        agg["AVG"] = round(float(agg["1B"]+agg["2B"]+agg["3B"]+agg["HR"])/float(agg["AB"]), 3)
-        agg["OBP"] = round(float(agg["1B"]+agg["2B"]+agg["3B"]+agg["HR"]+agg["BB"]+agg["IBB"]+agg["HBP"])/float(agg["PA"]), 3)
-        agg["SLG"] = round(float(agg["1B"]+2*agg["2B"]+3*agg["3B"]+4*agg["HR"])/float(agg["AB"]), 3)
-        agg["OPS"] = agg["OBP"] + agg["SLG"]
-
-        return agg
-    else:
-        return None
-
-
-def aggregatable_stats_window(batter_id, date, count):
-    # TODO: return player aggregate stats over the specified window.
-    conn = connect.sqlalchemy_open()
-
-    if count < 0:
-        operator = "<"
-    else:
-        operator = ">="
-    sql = "SELECT * FROM aggregate_batting WHERE batter = %s AND date %s '%s' ORDER BY game_id, inning, num LIMIT %s" % (batter_id, operator, date.strftime("%Y-%m-%d"), abs(count))
-
-    return pandas.read_sql_query(sql, conn)
-
-
-# Take a the results of aggregate_stats and return a slash line (avg/obp/slg) in text format
-def slash_line(agg_stats):
-    return "/".join((format(agg_stats["AVG"], '.3f').lstrip("0"),
-                     format(agg_stats["OBP"], '.3f').lstrip("0"),
-                     format(agg_stats["SLG"], '.3f').lstrip("0")))
