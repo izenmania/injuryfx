@@ -27,7 +27,7 @@ def prepost_heatmap_coordinates(inj_id, window, result=""):
 
 
     pre_inj = get_pitches(plyr_id, strt_dte, neg_window)
-    post_inj = get_pitchs(plyr_id, end_dte, window)
+    post_inj = get_pitches(plyr_id, end_dte, window)
 
     return pre_inj, post_inj
 
