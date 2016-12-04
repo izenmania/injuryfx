@@ -185,12 +185,7 @@ def pitcher_graphs():
     # Create the image object
     fig = p.get_prepost_pitch_selection_histogram(injury_id, window)
 
-    # Create a fake file
-    canvas = FigureCanvas(fig)
-    output = StringIO.StringIO()
-    fig.savefig(output)
-    output.seek(0)
-    return send_file(output, mimetype='image/png')
+    return send_file(graphics.generate_fake_file(fig), mimetype='image/png')
 
 @app.route('/injury/pitchselection')
 def pitch_selection():

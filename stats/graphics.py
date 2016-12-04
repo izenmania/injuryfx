@@ -5,6 +5,8 @@ import matplotlib
 # Force matplotlib to not use any Xwindows backend.
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+import StringIO
 
 
 def generate_heatmap(coords):
@@ -85,3 +87,10 @@ def create_bar_chart(pre_pitches_df, post_pitches_df, window_size):
     return fig
 
 
+def generate_fake_file(fig):
+    # Create a fake file
+    canvas = FigureCanvas(fig)
+    output = StringIO.StringIO()
+    fig.savefig(output)
+    output.seek(0)
+    return output
