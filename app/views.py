@@ -108,6 +108,48 @@ def pitcher():
         return render_template('error.html', title='Injury not found.', message='No matching injury was found.')
 
 
+@app.route('/injury/pitches')
+def injury_pitches():
+    pass
+
+
+@app.route('/injury/atbats')
+def injury_atbats():
+    inj_id = request.args.get("inj_id")
+    window = request.args.get("window")
+
+    inj = injury.get_injury(inj_id)
+
+    if inj:
+        player_type = pl.split_type(inj["player_id_mlbam"])
+        if player_type == "batter":
+            s = b.prepost_aggregate_stats(int(inj_id), int(window))
+
+            pre = {
+                "stats": "Slash Line: " + b.slash_line(s["pre"]),
+                "image_path": "/static/images/figure_1.png"
+            }
+            post = {
+                "stats": "Slash Line: " + b.slash_line(s["post"]),
+                "image_path": "/static/images/figure_1.png"
+            }
+        else:
+            s = p.prepost_aggregate_opp_stats(int(inj_id), int(window))
+
+            pre = {
+                "stats": "Opposing Slash Line: " + b.slash_line(s["pre"]),
+                "image_path": "/static/images/figure_1.png"
+            }
+            post = {
+                "stats": "Opposing Slash Line: " + b.slash_line(s["post"]),
+                "image_path": "/static/images/figure_1.png"
+            }
+
+        return render_template('prepost.html', title='Injury', pre=pre, post=post, player=inj)
+    else:
+        return render_template('error.html', title='Injury not found.', message='No matching injury was found.')
+
+
 @app.route('/player')
 def player():
     player_id = request.args.get("player_id")
