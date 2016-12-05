@@ -5,7 +5,6 @@ import json
 from datetime import datetime
 import exceptions
 import MySQLdb
-from stats import player
 
 
 # save_injury: Take a dict from parse_injury_transaction save it in the database
