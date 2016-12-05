@@ -154,6 +154,7 @@ def graph_heatmap():
     inj_id = int(request.args.get("inj_id"))
     window = int(request.args.get("window"))
     side = request.args.get("side")
+    result = request.args.get("result")
 
     if side == "pre":
         coef = -1
@@ -163,9 +164,8 @@ def graph_heatmap():
     inj = injury.get_injury(inj_id)
 
     if inj:
-        coords = pl.get_pitches(inj["player_id_mlbam"], inj["start_date"], coef * window)
+        coords = pl.get_pitches(inj["player_id_mlbam"], inj["start_date"], coef * window, result)
 
-        #coords = [{"x": -0.076, "y": 1.472},{"x": -0.940, "y": 1.910},{"x": -1.119, "y": 2.892},{"x": -0.181, "y": 2.269}]
         # Create the image object
         fig = graphics.generate_heatmap(coords)
 

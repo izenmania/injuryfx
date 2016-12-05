@@ -25,7 +25,7 @@ def prepost_heatmap_coordinates(inj_id, window, result=""):
     return pre_inj, post_inj
 
 
-def get_pitches(batter_id, date, count, columns=(), result=""):
+def get_pitches(batter_id, date, count, columns=(), result="swing"):
     if count < 0:
         operator = "<"
     else:
@@ -33,15 +33,27 @@ def get_pitches(batter_id, date, count, columns=(), result=""):
 
     conn = connect.open()
 
+    if result == "swing":
+        result_condition = "AND p.des NOT IN ('Called Strike', 'Ball')"
+    elif result == "contact":
+        result_condition = "AND p.des NOT IN ('Called Strike', 'Ball', 'Swinging Strike')"
+    elif result == "play":
+        result_condition = "AND p.des LIKE 'In play%'"
+    elif result == "miss":
+        result_condition = "AND p.des = 'Swinging Strike'"
+    else:
+        result_condition = ""
+
     sql = '''
         SELECT p.px AS x, p.pz AS y
         FROM gameday.game g
             INNER JOIN  gameday.pitch p ON g.game_id=p.game_id
         WHERE p.batter = %s AND g.date __operator__ %s
+            __result_condition__
         ORDER BY g.date ASC
         LIMIT %s
     '''
-    sql = sql.replace("__operator__", operator)
+    sql = sql.replace("__operator__", operator).replace("__result_condition__", result_condition)
     params = (batter_id, date.strftime("%Y-%m-%d"), abs(count))
 
     cur = conn.cursor(MySQLdb.cursors.DictCursor)

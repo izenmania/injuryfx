@@ -134,7 +134,7 @@ def slash_line(agg_stats):
                      format(agg_stats["SLG"], '.3f').lstrip("0")))
 
 
-def get_pitches(player_id, date, count, columns=(), result="", player_type=""):
+def get_pitches(player_id, date, count, columns=(), result="swing", player_type=""):
     if player_type not in ["pitcher", "batter"]:
         player_type = split_type(player_id)
 
