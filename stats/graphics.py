@@ -12,12 +12,24 @@ import StringIO
 def generate_heatmap(coords):
 
     # Number of points
-    n = 500
+    #n = 500
 
     # Takes a list of coordinate pairs and generates a heatmap, formatted for the site
     # Dummy numbers - placeholders.  In future will be generated from coords.
-    x = 6*np.random.randn(n)
-    y = 8*np.random.randn(n) + 30
+    #x = 6*np.random.randn(n)
+    #y = 8*np.random.randn(n) + 30
+
+    x = []
+    y = []
+    for entry in coords:
+        for key, value in entry.iteritems():
+            if key is "x":
+                x.append(value)
+            elif key is "y":
+                y.append(value)
+            else:
+                pass
+
 
     # Generate the 2d histogram
     # The domain is -24 to 24 inches horizontally and 0 to 60 inches vertically
