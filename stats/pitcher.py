@@ -100,7 +100,7 @@ def get_prepost_pitch_selection_histogram(injury_id, window):
 
     inj = injury.get_injury(injury_id)
 
-    pre = get_pitches(inj["player_id_mlbam"], inj["start_date"], window*-1)
-    post = get_pitches(inj["player_id_mlbam"], inj["start_date"], window)
+    pre = get_pitch_types(inj["player_id_mlbam"], inj["start_date"], window*-1)
+    post = get_pitch_types(inj["player_id_mlbam"], inj["start_date"], window)
     return graphics.create_bar_chart(pre, post, window)
 
