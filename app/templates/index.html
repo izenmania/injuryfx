@@ -7,51 +7,6 @@
     <span class="w3-padding w3-large">Measuring Injury Impact on Baseball Performance</span>
 </header>
 
-<!-- Heatmaps Section -->
-<div class="w3-container w3-padding-128" id="maps">
-  <h3 class="w3-center">Pre- and Post-Injury Heat Maps</h3>
-  <p class="w3-center w3-large">Select a player, injury, and window of time, in days.</p>
-  <div class="w3-row-padding w3-center" style="margin-top:32px">
-    <div class="w3-third">
-      <form action="" method="post" name="pitcher">
-        {{ pitcherform.hidden_tag() }}
-        <p class="w3-medium">
-           Pitcher<br>
-           {{ pitcherform.pitcher }}<br>
-           OR Batter<br>
-           {{ batterform.batter }}<br>
-           Injury<br>
-           {{ injuryform.injury }}<br>
-           Window<br>
-           {{ windowform.window }}<br>
-        </p>
-	<p><input type="submit" value="submit"></p>
-      </form>
-    </div>
-    <div class="w3-third">
-      <img src="{{ url_for('preplot') }}" alt="Heat Map" height="300">
-      <p class="w3-medium">Pre-Injury Pitch Selection</p>
-    </div>
-    <div class="w3-third">
-      <img src="{{ url_for('postplot') }}" alt="Heat Map" height="300">
-      <p class="w3-medium">Post-Injury Pitch Selection</p>
-    </div>
-  </div>
-</div>
-
-<!-- Splits Section -->
-<div class="w3-container w3-padding-128 w3-center w3-dark-grey" id="splits">
-  <h3>STATISTICAL SPLITS</h3>
-  <p class="w3-large">Relevant Aggregate Statistics</p>
-</div>
-
-
-<!-- Graphs Section -->
-<div class="w3-container w3-padding-128 w3-center" id="graphs">
-  <h3>PITCH SELECTION GRAPHS</h3>
-  <p class="w3-large">Time series graphs which reveal pitch selection over time</p>
-</div>
-
 <!-- Team Section -->
 <div class="w3-container w3-padding-128 w3-light-grey" id="team">
   <h3 class="w3-center">THE TEAM</h3>

@@ -31,45 +31,6 @@ def index():
 			   injuryform = injuryform,
 			   windowform = windowform)
 
-@app.route('/preplot/')
-def preplot():
-
-    # Create the image object
-    fig = Figure()
-    axis = fig.add_subplot(1, 1, 1)
-
-    xs = range(100)
-    ys = [random.randint(1, 50) for x in xs]
-
-    axis.plot(xs, ys)
-
-    #Create a fake file
-    canvas = FigureCanvas(fig)
-    output = StringIO.StringIO()
-    fig.savefig(output)
-    output.seek(0)
-    return send_file(output, mimetype='image/png')
-
-
-@app.route('/postplot/')
-def postplot():
-
-    # Create the image object
-    fig = Figure()
-    axis = fig.add_subplot(1, 1, 1)
-
-    xs = range(100)
-    ys = [random.randint(1, 50) for x in xs]
-
-    axis.plot(xs, ys)
-
-    # Create a fake file
-    canvas = FigureCanvas(fig)
-    output = StringIO.StringIO()
-    fig.savefig(output)
-    output.seek(0)
-    return send_file(output, mimetype='image/png')
-
 
 @app.route('/injury/pitches')
 def injury_pitches():
