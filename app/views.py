@@ -43,11 +43,13 @@ def injury_pitches():
     if inj:
         player_type = pl.split_type(inj["player_id_mlbam"])
         pre = {
-            "stats": "",
+            "header": "Pitches Thrown Pre-Injury" if player_type == "pitcher" else "Pitches Faced Pre-Injury",
+            "footer": "",
             "image_path": "/graphs/heatmap?inj_id=%s&window=%s&side=pre&result=%s" % (inj_id, window, result)
         }
         post = {
-            "stats": "",
+            "header": "Pitches Thrown Post-Injury" if player_type == "pitcher" else "Pitches Faced Post-Injury",
+            "footer": "",
             "image_path": "/graphs/heatmap?inj_id=%s&window=%s&side=post&result=%s" % (inj_id, window, result)
         }
 
@@ -70,20 +72,24 @@ def injury_atbats():
         if s["pre"] and s["post"]:
             if player_type == "batter":
                 pre = {
-                    "stats": "Slash Line: " + pl.slash_line(s["pre"]),
+                    "header": "Offense Pre-Injury",
+                    "footer": "Slash Line: " + pl.slash_line(s["pre"]),
                     "image_path": "/static/images/spraychart.png"
                 }
                 post = {
-                    "stats": "Slash Line: " + pl.slash_line(s["post"]),
+                    "header": "Offense Post-Injury",
+                    "footer": "Slash Line: " + pl.slash_line(s["post"]),
                     "image_path": "/static/images/spraychart.png"
                 }
             else:
                 pre = {
-                    "stats": "Opposing Slash Line: " + pl.slash_line(s["pre"]),
+                    "header": "Opposing Offense Pre-Injury",
+                    "footer": "Slash Line: " + pl.slash_line(s["pre"]),
                     "image_path": "/static/images/spraychart.png"
                 }
                 post = {
-                    "stats": "Opposing Slash Line: " + pl.slash_line(s["post"]),
+                    "header": "Opposing Offense Post-Injury",
+                    "footer": "Slash Line: " + pl.slash_line(s["post"]),
                     "image_path": "/static/images/spraychart.png"
                 }
 

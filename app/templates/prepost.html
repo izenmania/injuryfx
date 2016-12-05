@@ -1,15 +1,29 @@
 {% extends "injury.html" %}
 {% block content %}
     <div style="width: 50%; float: left">
+        {% if pre["header"] %}
+        <h4 style="font-weight: bold">{{ pre["header"] }}</h4>
+        {% endif %}
+        {% if pre["image_path"] %}
         <img src="{{ pre["image_path"] }}" style="width: 60%" />
+        {% endif %}
+        {% if pre["footer"] %}
         <h4>
             {{ pre["stats"] }}
         </h4>
+        {% endif %}
     </div>
     <div style="width: 50%; float: left">
+        {% if post["header"] %}
+        <h4 style="font-weight: bold">{{ post["header"] }}</h4>
+        {% endif %}
+        {% if post["image_path"] %}
         <img src="{{ post["image_path"] }}" style="width: 60%" />
+        {% endif %}
+        {% if post["footer"] %}
         <h4>
             {{ post["stats"] }}
         </h4>
+        {% endif %}
     </div>
 {% endblock %}
