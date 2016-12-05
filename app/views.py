@@ -36,6 +36,7 @@ def index():
 def injury_pitches():
     inj_id = request.args.get("inj_id")
     window = request.args.get("window")
+    result = request.args.get("result")
 
     inj = injury.get_injury(inj_id)
 
@@ -43,11 +44,11 @@ def injury_pitches():
         player_type = pl.split_type(inj["player_id_mlbam"])
         pre = {
             "stats": "",
-            "image_path": "/graphs/heatmap?inj_id=%s&window=%s&side=pre" % (inj_id, window)
+            "image_path": "/graphs/heatmap?inj_id=%s&window=%s&side=pre&result=%s" % (inj_id, window, result)
         }
         post = {
             "stats": "",
-            "image_path": "/graphs/heatmap?inj_id=%s&window=%s&side=post" % (inj_id, window)
+            "image_path": "/graphs/heatmap?inj_id=%s&window=%s&side=post&result=%s" % (inj_id, window, result)
         }
 
         return render_template('prepost.html', title='Pitch Location', pre=pre, post=post, player=inj)
@@ -164,7 +165,7 @@ def graph_heatmap():
     inj = injury.get_injury(inj_id)
 
     if inj:
-        coords = pl.get_pitches(inj["player_id_mlbam"], inj["start_date"], coef * window, result)
+        coords = pl.get_pitches(inj["player_id_mlbam"], inj["start_date"], coef * window, result=result)
 
         # Create the image object
         fig = graphics.generate_heatmap(coords)
