@@ -99,12 +99,8 @@ def save_injury(inj):
 
 # Load the details of a single injury by id
 def get_injury(inj_id, columns=""):
-    # TODO: retrieve a single injury row from the database based on injury_id.
-    # If columns is empty, return all. Otherwise, only those specified.
 
     conn = connect.open()
-
-    # (13330L, 452095L, 144L, 'fractured left hand', 'left', '["hand"]', '15-day', datetime.date(2016, 7, 10), datetime.date(2016, 8, 17))
 
     sql = '''
         SELECT i.injury_id, i.player_id_mlbam, i.team_id_mlbam,
