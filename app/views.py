@@ -70,20 +70,20 @@ def injury_atbats():
             if player_type == "batter":
                 pre = {
                     "stats": "Slash Line: " + pl.slash_line(s["pre"]),
-                    "image_path": "/static/images/figure_1.png"
+                    "image_path": "/static/images/spraychart.png"
                 }
                 post = {
                     "stats": "Slash Line: " + pl.slash_line(s["post"]),
-                    "image_path": "/static/images/figure_1.png"
+                    "image_path": "/static/images/spraychart.png"
                 }
             else:
                 pre = {
                     "stats": "Opposing Slash Line: " + pl.slash_line(s["pre"]),
-                    "image_path": "/static/images/figure_1.png"
+                    "image_path": "/static/images/spraychart.png"
                 }
                 post = {
                     "stats": "Opposing Slash Line: " + pl.slash_line(s["post"]),
-                    "image_path": "/static/images/figure_1.png"
+                    "image_path": "/static/images/spraychart.png"
                 }
 
             return render_template('prepost.html', title='At Bats', pre=pre, post=post, player=inj)
