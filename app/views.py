@@ -35,9 +35,15 @@ def index():
 def preplot():
 
     # Create the image object
-    fig = graphics.generate_heatmap(1)
+    fig = Figure()
+    axis = fig.add_subplot(1, 1, 1)
 
-    # Create a fake file
+    xs = range(100)
+    ys = [random.randint(1, 50) for x in xs]
+
+    axis.plot(xs, ys)
+
+    #Create a fake file
     canvas = FigureCanvas(fig)
     output = StringIO.StringIO()
     fig.savefig(output)
@@ -49,7 +55,13 @@ def preplot():
 def postplot():
 
     # Create the image object
-    fig = graphics.generate_heatmap(1)
+    fig = Figure()
+    axis = fig.add_subplot(1, 1, 1)
+
+    xs = range(100)
+    ys = [random.randint(1, 50) for x in xs]
+
+    axis.plot(xs, ys)
 
     # Create a fake file
     canvas = FigureCanvas(fig)
