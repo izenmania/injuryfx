@@ -24,9 +24,11 @@ def generate_heatmap(coords):
     for entry in coords:
         for key, value in entry.iteritems():
             if key is "x":
-                x.append(value)
+                inches = 12*value
+                x.append(inches)
             elif key is "y":
-                y.append(value)
+                inches = 12*value
+                y.append(inches)
             else:
                 pass
 
