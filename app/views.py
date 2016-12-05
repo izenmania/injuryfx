@@ -5,7 +5,7 @@ from .forms import PitcherForm, BatterForm, InjuryForm, WindowForm
 from stats import batter as b
 from stats import pitcher as p
 from stats import player as pl
-from injury import injury
+from stats import injury
 import StringIO
 from datetime import datetime, date
 import random

@@ -1,7 +1,6 @@
 from db import connect
 from db import query
-from injury import injury
-import player
+import player, injury
 from datetime import datetime
 import numpy
 import pandas
