@@ -1,3 +1,13 @@
-Main Document. Brief overview with links to the other docs.
+Welcome to InjuryFX.
 
-[Howto Run the Application](run.md)
+Collaboriators: Joe Izenman, Giles Ochs, Jessica Sanders, and Shawn Kessler  
+W205 Final Project Fall 2016. 
+
+Brief Introduction: Blah Blah BLah Blah Blah.
+
+[Detail Project Description](scope.md)  
+[How to Run the Application](run.md)  
+[Architecture](architecture.md)  
+[Data Sources](datasources.md)  
+[Future Scaling and Extensibility](future_scaling.md)  
+
