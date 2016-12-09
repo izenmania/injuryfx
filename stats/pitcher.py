@@ -1,8 +1,7 @@
 from db import connect
-from injury import injury
 import numpy
 import pandas
-import batter, graphics
+import batter, graphics, injury
 import MySQLdb
 
 

@@ -1,9 +1,8 @@
 from db import connect
 from db import query
-from injury import injury
 import MySQLdb
 import pandas
-import pitcher, batter
+import pitcher, batter, injury
 
 # Determines if a player's most useful splits are pitching or batting
 def split_type(player_id):

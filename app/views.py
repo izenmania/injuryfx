@@ -5,7 +5,7 @@ from .forms import PitcherForm, BatterForm, InjuryForm, WindowForm
 from stats import batter as b
 from stats import pitcher as p
 from stats import player as pl
-from injury import injury
+from stats import injury
 import StringIO
 from datetime import datetime, date
 import random
@@ -31,6 +31,9 @@ def index():
 			   injuryform = injuryform,
 			   windowform = windowform)
 
+@app.route('/team')
+def team():
+    return render_template('team.html', title='Team')
 
 @app.route('/injury/pitches')
 def injury_pitches():
