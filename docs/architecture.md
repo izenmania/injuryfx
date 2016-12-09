@@ -2,6 +2,7 @@
 
 Overview:  
 
+![Architecture Diagram](images/architecture.jpg)
 
 Apache/Flask 
 - Justifications:
