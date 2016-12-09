@@ -2,7 +2,7 @@
 
 ### InjuryFX
 InjuryFX data can be found here: JOE ADD AN APPROPRIATE URL  
-It contains injury data including who was injured, when they were injured, what disabled list they were put on, when they returned from the disabled list, and the location of the injury. We've ingested this data from 2009 to 2016.
+It contains injury data including who was injured, when they were injured, what disabled list they were put on, when they returned from the disabled list, and the location of the injury. We've ingested this data from 2009 to 2016. For these years the data is provided in JSON. Prior to those years the format is HTML and requires more laborious scraping. Because the pitch data quality drops off the further back in time you go and because injury science has improved over the years this more recent data was of most interest to us.
 
 ### MLB Gameday
 Gameday data can be found here: http://gd2.mlb.com/components/game/mlb/  
