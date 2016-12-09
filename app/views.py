@@ -31,6 +31,9 @@ def index():
 			   injuryform = injuryform,
 			   windowform = windowform)
 
+@app.route('/team')
+def team():
+    return render_template('team.html', title='Team')
 
 @app.route('/injury/pitches')
 def injury_pitches():
