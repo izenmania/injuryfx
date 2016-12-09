@@ -22,13 +22,14 @@ def generate_heatmap(coords):
     x = []
     y = []
     for entry in coords:
-        for key, value in entry.iteritems():
-            if key is "x" and value:
-                x.append(12*float(value))
-            elif key is "y" and value:
-                y.append(12*float(value))
-            else:
-                pass
+        if "x" in entry and "y" in entry:
+            for key, value in entry.iteritems():
+                if key is "x" and value:
+                    x.append(12*float(value))
+                elif key is "y" and value:
+                    y.append(12*float(value))
+                else:
+                    pass
 
 
     # Generate the 2d histogram
