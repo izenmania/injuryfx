@@ -14,12 +14,12 @@
         {{ inj['start_date'].strftime("%m/%d/%Y") }}-{{ inj['end_date'].strftime("%m/%d/%Y") }}<br />
         Splits:
         {% if player_type == "batter" %}
-            <a href="/injury/atbats?inj_id={{ inj['injury_id'] }}&window=50">At Bats</a> •
-            <a href="/injury/pitches?inj_id={{ inj['injury_id'] }}&window=50">Swing Rates</a>
+            <a href="/injury/atbats?inj_id={{ inj['injury_id'] }}&window={{ inj['atbat_window'] }}">At Bats</a> •
+            <a href="/injury/pitches?inj_id={{ inj['injury_id'] }}&window={{ inj['pitch_window'] }}&result=swing">Swing Rates</a>
         {% elif player_type == "pitcher" %}
-            <a href="/injury/atbats?inj_id={{ inj['injury_id'] }}&window=50">At Bats</a> •
-            <a href="/injury/pitches?inj_id={{ inj['injury_id'] }}&window=50">Pitch Location</a> •
-            <a href="/injury/pitchselection?injury_id={{ inj['injury_id'] }}&window=50">Pitch Selection</a>
+            <a href="/injury/atbats?inj_id={{ inj['injury_id'] }}&window={{ inj['atbat_window'] }}">At Bats</a> •
+            <a href="/injury/pitches?inj_id={{ inj['injury_id'] }}&window={{ inj['pitch_window'] }}">Pitch Location</a> •
+            <a href="/injury/pitchselection?injury_id={{ inj['injury_id'] }}&window={{ inj['pitch_window'] }}">Pitch Selection</a>
         {% endif %}
     </p>
     {% endfor %}

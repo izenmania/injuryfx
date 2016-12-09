@@ -112,9 +112,22 @@ def player():
         p = pl.get_player(player_id)
         if p:
             player_type = pl.split_type(player_id)
-            i = injury.get_player_injuries(player_id)
+            inj = injury.get_player_injuries(player_id)
 
-            return render_template('player_injury_list.html', title='Player', player=p, injuries=i, player_type=player_type)
+            for i in inj:
+                max_pitch_window = injury.get_max_pitch_window(i["injury_id"])
+                if max_pitch_window < 150:
+                    i["pitch_window"] = max_pitch_window
+                else:
+                    i["pitch_window"] = 150
+
+                max_atbat_window = injury.get_max_atbat_window(i["injury_id"])
+                if max_atbat_window < 50:
+                    i["atbat_window"] = max_atbat_window
+                else:
+                    i["atbat_window"] = 50
+
+            return render_template('player_injury_list.html', title='Player', player=p, injuries=inj, player_type=player_type)
         else:
             return render_template('error.html', title='Player not found', message='No matching player was found.')
     else:
