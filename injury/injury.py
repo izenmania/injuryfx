@@ -2,7 +2,7 @@ import sys
 from db import connect
 from db import query
 import json
-from datetime import datetime
+from datetime import date
 import exceptions
 import MySQLdb
 
@@ -97,4 +97,13 @@ def save_injury(inj):
     return out
 
 
-
+# Take any date object and return a date object of the first day of the next month
+def next_month(d):
+    y = d.year
+    m = d.month
+    new_m = d.month + 1
+    new_y = y
+    if new_m > 12:
+        new_m = 1
+        new_y += 1
+    return date(new_y, new_m, 1)

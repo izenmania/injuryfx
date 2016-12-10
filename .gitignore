@@ -7,3 +7,4 @@ ifx/*
 */*.pyc
 *.pyc
 *.swp
+scripts/test.py
