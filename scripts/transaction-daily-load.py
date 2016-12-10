@@ -1,6 +1,5 @@
 import sys, os
-import datetime
-from datetime import timedelta
+from datetime import timedelta, datetime, date
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from injury import raw, injury, parse
@@ -15,7 +14,7 @@ from db import query
 # raw.save_raw(filename)
 
 # Retrieve the last transaction saved, and the target conclusion date (typically last night)
-final_date = datetime.datetime.now().date() - timedelta(days=1)
+final_date = datetime.now().date() - timedelta(days=1)
 
 last_sql = '''
     SELECT *
@@ -52,6 +51,7 @@ while start_date < final_date:
     # Save all new injuries to the database
     for i in raw.new_injuries:
         injury.save_injury(parse.parse_injury_transaction(i))
+        injury.log_save(i["transaction_id"], datetime.strptime(i["trans_date"], "%Y-%m-%dT00:00:00"))
 
     # Advance one month
     start_date = next_date

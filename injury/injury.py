@@ -4,7 +4,6 @@ from db import query
 import json
 from datetime import date
 import exceptions
-import MySQLdb
 
 
 # save_injury: Take a dict from parse_injury_transaction save it in the database
@@ -95,6 +94,15 @@ def save_injury(inj):
         print("Error!", sys.exc_info()[0])
 
     return out
+
+
+def log_save(transaction_id, transaction_date):
+    conn = connect.open()
+    sql = "INSERT INTO injury_load_log VALUES (NULL, %s, %s, CURRENT_TIMESTAMP)"
+    params = (transaction_id, transaction_date.strftime("%Y-%m-%d"))
+    cur = conn.cursor()
+    cur.execute(sql, params)
+    conn.commit()
 
 
 # Take any date object and return a date object of the first day of the next month

@@ -22,7 +22,7 @@ def load_raw(filename):
     try:
         obj = s3.get_object(Bucket="injuryfx", Key="transactions/"+filename)
         raw_transactions = json.loads(obj['Body'].read().decode())
-        print(raw_transactions)
+        #print(raw_transactions)
         raw_injuries = filter_raw_injuries(raw_transactions)
     except botocore.exceptions.ClientError:
         print("No such key %s. Loading empty list for raw.", (filename,))
