@@ -1,7 +1,7 @@
 # How to Run the Application
 
 - Getting the Environment Setup 
-  1. Start an AWS instance with the publicly available AMI named ```InjuryFX-W205-Final```. For the purposes of exploring the application the t2.large instance type is sufficiant. Select your root drive size to be 80GB.
+  1. Start an AWS instance with the publicly available AMI named ```InjuryFX-W205-Final```. For the purposes of exploring the application the t2.large instance type is sufficient. Select your root drive size to be 80GB.
   2. Make sure you open port 80 in your security group to everyone or at least your own IP address as part of your instance start up.
   3. Connect as the ubuntu user. This is the default user and is referenced in the "Connect" button for your instance in the AWS dashboard. Once logged in you'll be placed in ```/home/ubuntu```.
   4. Flask and MySQL start automatically so there is nothing to run.
