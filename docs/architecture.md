@@ -26,4 +26,6 @@ Screenshot of Snapshot creation Task:
 - Justifications: In its current incarnation our data-lake is basically a backup store in case the data-sources ever disappear all together. The main requirement is that the data be resilient and accessible in the future. It will rarely, if ever be accessed, so speed of access is not a major factor of consideration.
 - Limitations: Not the fastest data-lake implementation, but speed is nonessential for our proposed use.
 
+[Next > Source Code Guide](source_code.md)  
+
 [Return to Documentation Index](index.md)
