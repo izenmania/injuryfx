@@ -64,5 +64,6 @@ Baseball Heatmaps provides a spreadsheet mapping various player keys. MLB.com, R
 
 ![Crunch Time Player ID Map](images/player-map.png)
 
+[Next > Future Scaling and Extensibility](future_scaling.md)  
 
 [Return to Documentation Index](index.md)
