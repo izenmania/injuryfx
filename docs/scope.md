@@ -6,7 +6,7 @@ To develop a tool that can be utilized by a variety of user types to analyze, an
 
 What Made It Interesting:
 
-Building a comprehensive understanding of the effect of injuries required pulling in data from a number of disparate sources to form a complete, central repository.  While more information on the data used can be found in [Datasources](datasources.md), we'll say here that they spanned from the text injury announcements that appear on MLB.com, to the detailed pitch metrics (spin, location, etc) from PitchF/X.  Because of this, the most challenging aspect of this project was building a pipeline that would pull, ingest, and store this diverse data on a regular basis into a series of databases that formed a cohesive central repository. Second to this was building out a set of functions that accessed multiple data types in parallel to derive user-facing outputs.
+Building a comprehensive understanding of the effect of injuries required pulling in data from a number of disparate sources to form a complete, central repository.  While more information on the data used can be found in [Data Sources](datasources.md), we'll say here that they spanned from the text injury announcements that appear on MLB.com, to the detailed pitch metrics (spin, location, etc) from PitchF/X.  Because of this, the most challenging aspect of this project was building a pipeline that would pull, ingest, and store this diverse data on a regular basis into a series of databases that formed a cohesive central repository. Second to this was building out a set of functions that accessed multiple data types in parallel to derive user-facing outputs.
 
 Current Scope:
 
