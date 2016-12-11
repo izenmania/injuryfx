@@ -25,5 +25,6 @@
 2. Enter the password: ```w205ifx```
 3. Databases of greatest interest: gameday, retrosheet, and injuryfx
 
+[Next > Architecture](architecture.md)
 
 [Return to Documentation Index](index.md)
