@@ -1,4 +1,4 @@
-# Datasources
+# Data Sources
 
 ### MLB Transactions
 MLB transaction data can be found [here](http://mlb.mlb.com/mlb/transactions/#month=10&year=2016).
