@@ -2,28 +2,68 @@
 
 ![Architecture Diagram](images/architecture.jpg)
 
-**Presentation Layer - Apache/Flask** 
+### Presentation Layer - Apache/Flask
 
-- Justifications: Apache is the de facto open source standard for industrial strength security and performance in serving web pages. Flask allowed us to quickly put together a dynamic web site using the same programming language as our ingestion layer.
-- Limitations: If the site sees high traffic volume, a single Apache instance could become a bottleneck. Future growth may necessitate a reverse proxy such as nginx to distribute traffic across multiple cloned web servers.
+#### Justifications
 
-**Serving Layer - MySQL**
+Apache is the de facto open source standard for industrial strength security and performance in serving web pages. Flask allowed us to quickly put together a dynamic web site using the same programming language as our ingestion layer.
 
-- Justifications: Some of our open source ingestion scripts, specifically py-gameday, are built with the assumption that you'll be importing your data into a MySQL database. After making this realization we did an analysis of features that we needed our database to support, specifically comparing MySQL with Postgres to see if it was worth rewriting parts of py-gameday to work with Postgres. Other than ingestion time we would not be doing a lot of writes to the database and we would not be doing ACID transactions. Mostly we will be performing parallel reads. This is the sort of tasks that MySQL shines at. We also considered database size. Our current DB didn't even reach 2GB; a size either MySQL or Postgres could handle. We do not have plans to do super advanced SQL queries so the subset of SQL supported by MySQL was sufficient for our needs. With all these facts in mind we opted to run MySQL rather than Postgres. In case of severe database failure or corruption we take daily snapshots of the EBS drive that the database lives on using [Cloud Watch](http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/TakeScheduledSnapshot.html). This allows us to bring the database server back up and at most have to import a single days worth of lost data in the rare instance where the database or the EBS drive it lives on becomes corrupted or permanently unavailable.  
+#### Limitations
 
-Screenshot of Snapshot creation Task:
+If the site sees high traffic volume, a single Apache instance could become a bottleneck. Future growth may necessitate a reverse proxy such as nginx to distribute traffic across multiple cloned web servers.
+
+### Serving Layer - MySQL
+
+#### Justifications
+
+The py-gameday and py-retrosheet libraries for data ingestion are built with MySQL support. After reviewing our application's needs, we saw no need to re-engineer these scripts to use a different RDBMS.
+
+- Overall data volume is <2GB, which a well-indexed MySQL database can handle easily.
+- All user interaction is currently in reads. We are not doing any kind of transaction processing, so high-volume ACID transactions are not needed.
+- All writes are performed by nightly batch process, and are relatively low-volume.
+- Current aggregations in use do not leverage window functions or other advanced SQL not supported by MySQL.
+
+#### Limitations
+
+Some possible future features may merit a new assessment of storage technology.
+
+- If MLB eventually releases their Statcast data for public consumption, the data volume and aggregation complexity will rise significantly.
+- If the application sees wide use, some level of replication may be needed to support query volume.
+
+The ingestion scripts and the presentation layer scripts make use of SQLAlchemy and MySQLdb, which is built on the standard Python database api. A later move to Postgres or some other system would only require fairly trivial code updates.
+
+In case of severe database failure or corruption we take daily snapshots of the EBS drive that the database lives on using [Amazon Cloud Watch](http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/TakeScheduledSnapshot.html). This allows us to bring the database server back up and at most have to import a single day's worth of lost data in the rare instance where the database or EBS volume become corrupted or permanently unavailable.
+
 ![Creating Daily Snapshot Schedule](images/daily_snap_shot_creation.png)
 
-- Limitations: If we later implemented functionality that required ACID transaction and started to do a lot of writes then the performance and stability of MySQL might become a liability. With that in mind we developed our code in such a manner that the ingestion scripts and the presentation layer scripts did not access the database APIs directly but instead used a facade API. If we later change to Postgres the source code need only be updated in a small number of places.
+### Python Ingestion Scripts with Batch Processing
 
-**Python Ingestion Scripts with Batch Processing**
+#### Justifications
 
-- Justifications: The ingestion scripts are written in Python for consistency across the application stack and because it's generally a great Data Science language. The ingestion is done in batches rather than in a more advanced queuing system like Storm or Kafka because there there are only two events per day and each take less than two minutes to run. There is no worry about the system running out of resources and not being able to keep up with intake data.
-- Limitations: If we ever had a lot more data we would have to adjust this strategy. Given the state of open source sports data there currently isn't a lot of existing options for more data to ingest. See [Future Scaling](future_scaling.md) for an in depth discussion about vectors that could increase our ingestion rates as well as what we would do to compensate for that additional data flow.
+Python provides several features that made it a good choice for our data ingestion scripts.
 
-**S3 Datalake**
+- py-gameday and py-retrosheet provide solid, pre-existing libraries for most of our data acquisition.
+- The requests and json packages enable easy scraping of MLB.com's JSON APIs.
+- Pandas dataframes are a good resource for aggregating at-bat stats.
 
-- Justifications: In its current incarnation our data-lake is basically a backup store in case the data-sources ever disappear all together. The main requirement is that the data be resilient and accessible in the future. It will rarely, if ever be accessed, so speed of access is not a major factor of consideration.
-- Limitations: Not the fastest data-lake implementation, but speed is nonessential for our proposed use.
+The incoming data from Gameday and MLB.com are reliably available on a daily basis, so streaming or queueing systems are not needed, and nightly batch processing is sufficient for aggregation.
+
+#### Limitations
+
+This processing method works well for the scale of freely available baseball data. If a high-volume data source like Statcast becomes available, Spark may be integrated using the PySpark libraries. See [Future Scaling](future_scaling.md) for an in-depth discussion about vectors that could increase our ingestion rates as well as strategies to compensate for that additional data flow.
+
+### S3 Datalake
+
+#### Justifications
+
+There are several possible reasons why we might need to return to the raw transaction data for reprocessing. The body part to body area map is a work in progress, and future changes may merit a fresh import, and cases may be found were the current regular expression did not correctly parse the text. In order to account for possible changes in MLB.com's API—reduced availability, format change, request throttling—all imported JSON is stored in S3 prior to processing.
+
+The files are stored in monthly batches (such as 201605.json). At peak transaction time (mid-season), these files reach a bit higher than 1MB. This is small enough to not merit HDFS or other high-volume storage systems.
+
+Possible later uses of S3 include caching frequently-generated graphics.
+
+#### Limitations
+
+S3 is not particularly fast. However, our current use is for overnight batch jobs, rather than dynamic querying, so speed will only be a concern if we add a higher-volume data source later.
 
 [Return to Documentation Index](index.md)

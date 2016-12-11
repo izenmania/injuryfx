@@ -58,9 +58,9 @@ The data is availbale in a consistent text file format, and we use the open sour
 
 Because we have only successfully imported the injury data back to 2009, no Retrosheet data is currently being used by the application, but we have developed views to aggregate across a combination of Gameday and Retrosheet, for future use.
 
-### Baseball Heatmaps Player IDs
+### Crunch Time Player IDs
 
-Baseball Heatmaps provides a spreadsheet mapping various player keys. MLB.com, Retrosheet, Baseball Prospectus and other sites all use different unique id fields for players. This data set is essential for entity resolution as we cross the threshold between Gameday and Retrosheet data, and will be useful as we incorporate any future data sources.
+Tim Blaker's Crunch Time Baseball site provides a spreadsheet mapping various player keys, found [here](http://crunchtimebaseball.com/baseball_map.html). MLB.com, Retrosheet, Baseball Prospectus and other sites all use different unique id fields for players. This data set is essential for entity resolution as we cross the threshold between Gameday and Retrosheet data, and will be useful as we incorporate any future data sources.
 
 ![Crunch Time Player ID Map](images/player-map.png)
 
