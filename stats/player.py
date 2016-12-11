@@ -4,8 +4,9 @@ import MySQLdb
 import pandas
 import pitcher, batter, injury
 
-# Determines if a player's most useful splits are pitching or batting
+
 def split_type(player_id):
+    """Determines whether a player is, by default, a pitcher or a batter."""
     sql = '''
         SELECT type
         FROM gameday.player
@@ -17,6 +18,7 @@ def split_type(player_id):
 
 
 def get_player(player_id):
+    """Retrieve all information about a player, given their MLBAM id."""
     sql = '''
         SELECT *
         FROM gameday.player
@@ -28,18 +30,22 @@ def get_player(player_id):
 
 
 def all_players_with_injuries(type="all", year=None):
+    """Retrieve all players with at least one completed DL stint. Can be filtered by player type and year."""
     conn = connect.open()
 
+    # If type is set, filter. Otherwise, get all players.
     if type in ["batter", "pitcher"]:
         type_condition = "AND type='%s'" % type
     else:
         type_condition = ""
 
+    # If year is set, filter.
     if year:
         year_condition = "AND YEAR(start_date) = %s" % year
     else:
         year_condition = ""
 
+    # Build and execute query
     sql = '''
         SELECT p.id, p.first_name, p.last_name, p.type, COUNT(*) AS injury_count, MAX(i.start_date) AS latest_injury
         FROM injuryfx.injuries i
@@ -62,7 +68,9 @@ def all_players_with_injuries(type="all", year=None):
 
 
 def aggregate_stats(stats):
+    """Given a pandas dataframe of plate appearance information, generate a standard array of aggregate stats."""
     if len(stats) > 0:
+        # The basic stats are just totals of each possible outcome
         agg = {
             "AB": stats["AB"].sum(),
             "PA": stats["PA"].sum(),
@@ -78,6 +86,7 @@ def aggregate_stats(stats):
             "HBP": stats["HBP"].sum(),
         }
 
+        # Generate the core batting stats that can be derived from the above totals.
         agg["AVG"] = round(float(agg["1B"]+agg["2B"]+agg["3B"]+agg["HR"])/float(agg["AB"]), 3)
         agg["OBP"] = round(float(agg["1B"]+agg["2B"]+agg["3B"]+agg["HR"]+agg["BB"]+agg["IBB"]+agg["HBP"])/float(agg["PA"]), 3)
         agg["SLG"] = round(float(agg["1B"]+2*agg["2B"]+3*agg["3B"]+4*agg["HR"])/float(agg["AB"]), 3)
@@ -89,11 +98,14 @@ def aggregate_stats(stats):
 
 
 def aggregatable_stats_window(player_id, date, count, player_type=""):
+    """Retrieve a dataframe of individual plate appearances and their outcomes, for later aggregation."""
     conn = connect.sqlalchemy_open()
 
+    # If the call does not specify batter or pitcher, determine that player's default type
     if not player_type:
         player_type = split_type(player_id)
 
+    # If count is negative, get plate appearances prior to date. Otherwise, on or after.
     if count < 0:
         operator = "<"
     else:
@@ -114,10 +126,13 @@ def aggregatable_stats_window(player_id, date, count, player_type=""):
 
 
 def prepost_aggregate_stats(inj_id, window):
+    """Given a specific injury and a window, retrieve the aggregate stats
+    for that window size before and after the injury."""
+
     # Retrieve the injury details
     inj = injury.get_injury(inj_id)
 
-    # Generate aggregate stats for window days before and after the injury
+    # Generate aggregate stats for window events before and after the injury
     stats = {
         "pre": aggregate_stats(aggregatable_stats_window(inj["player_id_mlbam"], inj["start_date"], window*-1)),
         "post": aggregate_stats(aggregatable_stats_window(inj["player_id_mlbam"], inj["end_date"], window))
@@ -126,14 +141,16 @@ def prepost_aggregate_stats(inj_id, window):
     return stats
 
 
-# Take a the results of aggregate_stats and return a slash line (avg/obp/slg) in text format
 def slash_line(agg_stats):
+    """Take the results of aggregate_stats and return a text formatted slash line (avg/obp/slg)"""
     return "/".join((format(agg_stats["AVG"], '.3f').lstrip("0"),
                      format(agg_stats["OBP"], '.3f').lstrip("0"),
                      format(agg_stats["SLG"], '.3f').lstrip("0")))
 
 
 def get_pitches(player_id, date, count, columns=(), result="swing", player_type=""):
+    """Retrieve all pitches over a given count for a player. This function calls out to the batter- and
+    pitcher-specific versions of get_pitches."""
     if player_type not in ["pitcher", "batter"]:
         player_type = split_type(player_id)
 

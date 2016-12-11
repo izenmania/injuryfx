@@ -1,3 +1,4 @@
+"""Functions to process statistics specific to batters"""
 from db import connect
 import numpy
 import pandas
@@ -5,22 +6,10 @@ import batter, graphics, injury
 import MySQLdb
 
 
-def heatmap_coordinates(inj_id, window):
-    inj_dates = injury.get_injury(inj_id)
-
-    strt_dte = inj_dates['start_date']
-    end_dte = inj_dates['end_date']
-    plyr_id = inj_dates['player_id_mlbam']
-
-    neg_window = window*(-1)
-
-    pre_inj = get_pitches(plyr_id, strt_dte, neg_window)
-    post_inj = get_pitches(plyr_id, end_dte, window)
-
-    return pre_inj, post_inj
-
-
 def get_pitches(pitcher_id, date, count, columns=()):
+    """Retrieve a given number (count) of pitches, before or after a given date, thrown by a pitcher."""
+
+    # If count is negative, find pitches prior to the date. If positive, on or after the date.
     if count < 0:
         operator = "<"
     else:
@@ -28,6 +17,7 @@ def get_pitches(pitcher_id, date, count, columns=()):
 
     conn = connect.open()
 
+    # Built and execute the query to retrieve pitch list
     sql = '''
         SELECT p.px AS x, p.pz AS y
         FROM gameday.game g
@@ -48,6 +38,9 @@ def get_pitches(pitcher_id, date, count, columns=()):
 
 
 def get_atbats(pitcher_id, date, count, columns=()):
+    """Retrieve a given number (count) of at bats, before or after a given date, faced by a pitcher."""
+
+    # If count is negative, find at-bats prior to the date. If positive, on or after the date.
     if count < 0:
         operator = "<"
     else:
@@ -55,6 +48,7 @@ def get_atbats(pitcher_id, date, count, columns=()):
 
     conn = connect.open()
 
+    # Built and execute the query to retrieve at-bat list
     sql = '''
         SELECT g.date, ab.event
         FROM gameday.game g
@@ -76,12 +70,16 @@ def get_atbats(pitcher_id, date, count, columns=()):
 
 
 def get_pitch_types(player_id, date, count):
+    """Retrieve the pitch types of a given number (count) of pitches, before or after a given date"""
     conn = connect.sqlalchemy_open()
 
+    # If count is negative, find at-bats prior to the date. If positive, on or after the date.
     if count < 0:
         operator = "<"
     else:
         operator = ">="
+
+    # Built and execute the query to retrieve at-bat list
     sql = '''select pitch_type, count(game_id) pitch_count
              from (select game_id, pitch_type
                    from gameday.pitch
@@ -95,7 +93,7 @@ def get_pitch_types(player_id, date, count):
 
 
 def get_prepost_pitch_selection_histogram(injury_id, window):
-    '''Create graph comparing of pitch selection before and after an injury'''
+    """Create graph comparing of pitch selection before and after an injury"""
 
     inj = injury.get_injury(injury_id)
 

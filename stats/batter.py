@@ -1,3 +1,4 @@
+"""Functions to process statistics specific to batters"""
 from db import connect
 from db import query
 import player, injury
@@ -7,24 +8,11 @@ import pandas
 import MySQLdb
 
 
-def prepost_heatmap_coordinates(inj_id, window, result=""):
-
-    inj_dates = injury.get_injury(inj_id)
-
-    strt_dte = inj_dates['start_date']
-    end_dte = inj_dates['end_date']
-    plyr_id = inj_dates['player_id_mlbam']
-
-    neg_window = window*(-1)
-
-
-    pre_inj = get_pitches(plyr_id, strt_dte, neg_window)
-    post_inj = get_pitches(plyr_id, end_dte, window)
-
-    return pre_inj, post_inj
-
-
 def get_pitches(batter_id, date, count, columns=(), result="swing"):
+    """Retrieve a given number (count) of pitches, before or after a given date, thrown to a batter.
+    Can be filtered on batter action/pitch result."""
+
+    # If count is negative, find pitches prior to the date. If positive, on or after the date.
     if count < 0:
         operator = "<"
     else:
@@ -32,17 +20,23 @@ def get_pitches(batter_id, date, count, columns=(), result="swing"):
 
     conn = connect.open()
 
+    # Filter based on the desired outcome of the pitch
     if result == "swing":
+        # All pitches swung at by the batter
         result_condition = "AND p.des NOT IN ('Called Strike', 'Ball')"
     elif result == "contact":
+        # All pitches contacted by the batter
         result_condition = "AND p.des NOT IN ('Called Strike', 'Ball', 'Swinging Strike')"
     elif result == "play":
+        # All pitches put into play
         result_condition = "AND p.des LIKE 'In play%'"
     elif result == "miss":
+        # All pitches actively swung at and missed
         result_condition = "AND p.des = 'Swinging Strike'"
     else:
         result_condition = ""
 
+    # Built and execute the query to retrieve pitch list
     sql = '''
         SELECT p.px AS x, p.pz AS y
         FROM gameday.game g
@@ -64,7 +58,9 @@ def get_pitches(batter_id, date, count, columns=(), result="swing"):
 
 
 def get_atbats(batter_id, date, count, columns=()):
+    """Retrieve a given number (count) of at bats, before or after a given date, by a batter."""
 
+    # If count is negative, find at-bats prior to the date. If positive, on or after the date.
     if count < 0:
         operator = "<"
     else:
@@ -72,6 +68,7 @@ def get_atbats(batter_id, date, count, columns=()):
 
     conn = connect.open()
 
+    # Build and execute the query
     sql = '''
         SELECT g.date, ab.event
         FROM gameday.game g

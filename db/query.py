@@ -1,8 +1,11 @@
+"""Functions for certain commonly used SELECT queries"""
 from db import connect
 import MySQLdb
 
 
 def select_list(query):
+    """Generates a list from a single-column SELECT. If the query returns multiple columns,
+    only the first will be returned"""
     conn = connect.open()
 
     out = []
@@ -19,6 +22,8 @@ def select_list(query):
 
 
 def select_single(query, params=()):
+    """Returns a the first column of the first row of a SELECT. Intended for single-value queries, such as
+    retrieving a general body region based on a specific body part."""
     conn = connect.open()
     val = None
 
@@ -34,6 +39,8 @@ def select_single(query, params=()):
 
 
 def select_first_row(query, params=()):
+    """Returns the entire first row of a SELECT result. Intended for single-row queries, such as
+    retrieving a record based on primary key."""
     conn = connect.open()
     row = None
 

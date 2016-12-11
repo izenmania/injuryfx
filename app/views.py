@@ -17,6 +17,8 @@ from stats import graphics
 @app.route('/')
 @app.route('/index')
 def index():
+    """Flask view for the application home page."""
+
     # Create form objects
     pitcherform = PitcherForm()
     batterform = BatterForm()
@@ -33,10 +35,12 @@ def index():
 
 @app.route('/team')
 def team():
+    """Flask view for the development team bios"""
     return render_template('team.html', title='Team')
 
 @app.route('/injury/pitches')
 def injury_pitches():
+    """Flask view for pitch-location heatmaps before and after an injury. Used for both pitchers and batters."""
     inj_id = request.args.get("inj_id")
     window = request.args.get("window")
     result = request.args.get("result")
@@ -63,6 +67,7 @@ def injury_pitches():
 
 @app.route('/injury/atbats')
 def injury_atbats():
+    """Flask view for at-bat level aggregate statistics, and eventually for spraychart outcome visualizations."""
     inj_id = request.args.get("inj_id")
     window = request.args.get("window")
 
@@ -105,10 +110,12 @@ def injury_atbats():
 
 @app.route('/player')
 def player():
+    """Flask view for individual or listing players"""
     player_id = request.args.get("player_id")
     year = request.args.get("year")
 
     if player_id:
+        # If a player_id is specified, display a list of all injuries for that player, and links to visualizations.
         p = pl.get_player(player_id)
         if p:
             player_type = pl.split_type(player_id)
@@ -131,6 +138,7 @@ def player():
         else:
             return render_template('error.html', title='Player not found', message='No matching player was found.')
     else:
+        # If no player_id, display a list of all pitchers and batters with viewable injury information.
         pitchers = pl.all_players_with_injuries("pitcher", year=year)
         batters = pl.all_players_with_injuries("batter", year=year)
 
@@ -139,11 +147,13 @@ def player():
 
 @app.route('/error')
 def error():
+    """Generic Flask view for error pages"""
     return render_template('error.html', title='Error', message="This is an error message.")
 
 
 @app.route('/graphs/pitchselection')
 def graph_pitch_selection():
+    """Flask view for generating pitch selection barcharts as an image in the browser"""
     injury_id = int(request.args.get("injury_id"))
     window = int(request.args.get("window"))
 
@@ -154,6 +164,7 @@ def graph_pitch_selection():
 
 @app.route('/injury/pitchselection')
 def pitch_selection():
+    """Flask view for displaying the pitch selection barchart image for a given injury event."""
     injury_id = int(request.args.get("injury_id"))
     window = int(request.args.get("window"))
 
@@ -174,6 +185,7 @@ def pitch_selection():
 
 @app.route('/graphs/heatmap')
 def graph_heatmap():
+    """Flask view for generating pitch location heatmaps as an image in the browser."""
     inj_id = int(request.args.get("inj_id"))
     window = int(request.args.get("window"))
     side = request.args.get("side")

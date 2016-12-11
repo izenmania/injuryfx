@@ -1,3 +1,4 @@
+"""Functions to generate graphics from data produced in other packages."""
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib import cm as cm
@@ -10,20 +11,17 @@ import StringIO
 
 
 def generate_heatmap(coords):
-
-    # Number of points
-    #n = 500
-
-    # Takes a list of coordinate pairs and generates a heatmap, formatted for the site
-    # Dummy numbers - placeholders.  In future will be generated from coords.
-    #x = 6*np.random.randn(n)
-    #y = 8*np.random.randn(n) + 30
+    """Given a set of x,y coordinates pulled from pitch data, generate a heatmap of pitch location frequency,
+    with a rough approximation of a strike zone for reference."""
 
     x = []
     y = []
+
+    # Process the coordinates into two separate vectors.
     for entry in coords:
         if "x" in entry and "y" in entry:
             for key, value in entry.iteritems():
+                # Only append valid entries. Multiply by 12 because pitchfx data is in feet, heatmap is in inches.
                 if key is "x" and value:
                     x.append(12*float(value))
                 elif key is "y" and value:
@@ -63,8 +61,9 @@ def generate_heatmap(coords):
 
     return fig
 
+
 def get_pitch_count_list(pitch_types, pitches_df):
-    'get a list of pinch counts that include 0 for pitches not in this dataframe'
+    """get a list of pitch counts that include 0 for pitches not in this dataframe"""
     counts = []
     for pitch_type in pitch_types:
        for row in pitches_df.iterrows():
@@ -76,8 +75,9 @@ def get_pitch_count_list(pitch_types, pitches_df):
 
     return counts
 
+
 def create_bar_chart(pre_pitches_df, post_pitches_df, window_size):
-    'Create graph comparing pre and post injury pitch pitch selection'
+    """Create graph comparing pre and post injury pitch pitch selection"""
     fig, ax = plt.subplots()
     x = list(set(pre_pitches_df["pitch_type"]) | set(post_pitches_df["pitch_type"]))
     n_groups = len(x)
@@ -101,7 +101,7 @@ def create_bar_chart(pre_pitches_df, post_pitches_df, window_size):
 
 
 def generate_fake_file(fig):
-    # Create a fake file
+    """Process matplotlib output into a format that outputs to the browser as an image file."""
     canvas = FigureCanvas(fig)
     output = StringIO.StringIO()
     fig.savefig(output)

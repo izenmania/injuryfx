@@ -1,3 +1,4 @@
+"""Functions for saving parsed injuries to the database for later analysis"""
 import sys
 from db import connect
 from db import query
@@ -10,6 +11,9 @@ import exceptions
 # This function is intended to be run chronologically over the entries in the json files.
 # Transfer and activate options rely on finding the most recent prior transaction for the player.
 def save_injury(inj):
+    """Takes a parsed injury dict, as returned by parse.parse_injury_transaction, and saves it to the database.
+    This function is intended to be run chronologically over the entries in the MLB.com JSON files, as transfer
+    and activate actions rely on finding the most recent prior transaction for the player."""
     out = ""
     conn = connect.open()
 
@@ -39,6 +43,7 @@ def save_injury(inj):
             conn.commit()
 
         else:
+            # This is an activation or a transfer to the 60-day DL, which means it is an update to an existing row.
             # Get the most recent uncompleted injury by the player
             select_sql = '''
                 SELECT injury_id
@@ -83,9 +88,8 @@ def save_injury(inj):
             else:
                 # No matching injury entry was found.
                 out = "Error: no injury match found."
-                # TODO: log the unmatched injury to somewhere
+                # TODO: log the unmatched injury to somewhere, for later review.
 
-    # TODO: improve error handling
     except exceptions.TypeError as e:
         print(e)
     except exceptions.AttributeError as e:
@@ -97,6 +101,7 @@ def save_injury(inj):
 
 
 def log_save(transaction_id, transaction_date):
+    """Logs the latest save point of the transaction import, so that the process can pick up where it left off."""
     conn = connect.open()
     sql = "INSERT INTO injury_load_log VALUES (NULL, %s, %s, CURRENT_TIMESTAMP)"
     params = (transaction_id, transaction_date.strftime("%Y-%m-%d"))
@@ -105,8 +110,8 @@ def log_save(transaction_id, transaction_date):
     conn.commit()
 
 
-# Take any date object and return a date object of the first day of the next month
 def next_month(d):
+    """Take any date object and return a date object of the first day of the next month."""
     y = d.year
     m = d.month
     new_m = d.month + 1

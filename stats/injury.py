@@ -1,3 +1,4 @@
+"""Functions for retrieving and processing details about particular injury events"""
 import sys
 from db import connect
 from db import query
@@ -8,11 +9,11 @@ import MySQLdb
 import player
 
 
-# Load the details of a single injury by id
 def get_injury(inj_id, columns=""):
-
+    """Load the details of a single injury by id"""
     conn = connect.open()
 
+    # Build and execute the query to get all the needed player and injury information
     sql = '''
         SELECT i.injury_id, i.player_id_mlbam, i.team_id_mlbam,
             i.injury, i.side, i.parts, i.dl_type,
@@ -30,6 +31,7 @@ def get_injury(inj_id, columns=""):
     if cur.rowcount > 0:
         res = cur.fetchone()
 
+        # Process the output into correct data formats
         inj = {
             "injury_id": res[0],
             "player_id_mlbam": res[1],
@@ -48,13 +50,8 @@ def get_injury(inj_id, columns=""):
         return None
 
 
-
-# Find all injuries matching the given set of search terms
-def search_injuries(name="", start_date="", end_date=""):
-    pass
-
-# Find all injuries for a given player
 def get_player_injuries(player_id):
+    """Retrieve a list of all injuries for a given player."""
     conn = connect.open()
 
     sql = '''
@@ -65,7 +62,7 @@ def get_player_injuries(player_id):
         FROM injuryfx.injuries i
             INNER JOIN gameday.player p ON p.id = i.player_id_mlbam
         WHERE i.player_id_mlbam = %s
-		AND i.end_date IS NOT NULL
+            AND i.end_date IS NOT NULL
         ORDER BY i.start_date DESC
     '''
     params = (player_id, )
@@ -80,8 +77,9 @@ def get_player_injuries(player_id):
 
     return list
 
+
 def _get_window_boundaries(injury_id, break_on_off_season=False):
-    'Calculate max date boundaries around an injury.'
+    """Calculate max date boundaries around an injury."""
 
     conn = connect.open()
 
@@ -130,10 +128,10 @@ def _get_window_boundaries(injury_id, break_on_off_season=False):
     return boundaries
 
 def get_max_atbat_window(injury_id, player_type=None, break_on_off_season=False):
-    '''Calculate the maximum window size on each side of an injury for a batter.
+    """Calculate the maximum window size on each side of an injury for a batter.
     The borders are either defined as another injury or the break in a season
-    if break_on_off_season == TRUE (TODO, make season break actually happen)
-    '''
+    if break_on_off_season == TRUE (TODO: make season break actually happen)
+    """
 
     boundaries = _get_window_boundaries(injury_id, break_on_off_season)
     
@@ -186,10 +184,10 @@ def get_max_atbat_window(injury_id, player_type=None, break_on_off_season=False)
 
 
 def get_max_pitch_window(injury_id, player_type=None, break_on_off_season=False):
-    '''Calculate the maximum window size on each side of an injury for a pitcher.
+    """Calculate the maximum window size on each side of an injury for a pitcher.
     The borders are either defined as another injury or the break in a season
     iif break_on_off_season == TRUE (TODO, make season break actually happen)
-    '''
+    """
     boundaries = _get_window_boundaries(injury_id, break_on_off_season)
 
     current_injury_date = boundaries["current_injury"]["start_date"]
