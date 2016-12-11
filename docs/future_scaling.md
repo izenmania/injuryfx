@@ -15,4 +15,6 @@ Two other possibilities if we needed to scale out the database layer:
 MySQL Cluster: https://www.mysql.com/products/cluster/  
 Migrate to a Postgres Cluster: https://www.postgresql.org/docs/9.5/static/creating-cluster.html
 
+[Next > Sample Tools](sample_tools.md)  
+
 [Return to Documentation Index](index.md)
