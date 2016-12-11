@@ -92,7 +92,6 @@ if __name__ == '__main__':
 
 
     opt.add_argument("-y","--year", default=current_year, type=int,
-                     required=True,
                      choices=range(2001,current_year + 1),
                      metavar='YYYY',
                      help="Required. 4 digit year.",)
