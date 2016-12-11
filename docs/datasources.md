@@ -60,7 +60,7 @@ Because we have only successfully imported the injury data back to 2009, no Retr
 
 ### Crunch Time Player IDs
 
-Tim Blaker's Crunch Time Baseball site provides a spreadsheet mapping various player keys, found [here](http://crunchtimebaseball.com/baseball_map.html). MLB.com, Retrosheet, Baseball Prospectus and other sites all use different unique id fields for players. This data set is essential for entity resolution as we cross the threshold between Gameday and Retrosheet data, and will be useful as we incorporate any future data sources.
+Tim Blaker's Crunch Time Baseball site provides a spreadsheet mapping various player keys, found [here](http://crunchtimebaseball.com/baseball_map.html). MLB.com, Retrosheet, Baseball Reference and other sites all use different unique id fields for players. This data set is essential for entity resolution as we cross the threshold between Gameday and Retrosheet data, and will be useful as we incorporate any future data sources.
 
 ![Crunch Time Player ID Map](images/player-map.png)
 
