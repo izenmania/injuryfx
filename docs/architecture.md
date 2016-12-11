@@ -66,4 +66,6 @@ Possible later uses of S3 include caching frequently-generated graphics.
 
 S3 is not particularly fast. However, our current use is for overnight batch jobs, rather than dynamic querying, so speed will only be a concern if we add a higher-volume data source later.
 
+[Next > Source Code Guide](source_code.md)  
+
 [Return to Documentation Index](index.md)

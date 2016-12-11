@@ -32,4 +32,6 @@ Contains Python files that retrieve injury, game, pitch, atbat, and player data 
 ### Root Directory
 Contains a couple files for bootstrapping the applications logging and configuration when Flask starts up.
 
+[Next > Data Sources](datasources.md)  
+
 [Return to Documentation Index](index.md)
