@@ -11,4 +11,6 @@ There are many tools that could be built on top of our combined data. Here are b
 ### Pitch Selection Graphs (before and after injury):
 ![Pitch Selection](images/pitch_selection_splits.png)
 
+[Next > Copy of Final Presentation Slides (pdf)](w205_final_presentation.pdf) 
+
 [Return to Documentation Index](index.md)
