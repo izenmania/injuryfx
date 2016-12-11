@@ -11,8 +11,8 @@ retro: 130.81MB
 
 This contains data for all sources from 2009 to 2016, seven years of data in less than 2GB. MySQL is routinely used in production systems to store databases with up to 1TB of data. At our current ingestion rate MySQL should suffice for many years into the future unless the sources start producing much more data with each ingestion. The most likely aspect of the system that would need scaling is the web front end and its multiple concurrent accesses of MySQL. Since all of our analytics are done in real-time the MySQL server with enough traffic could see significant slow down. The site in its current incarnation doesn't require any ACID transactions nor state management; its basically a read only system, which MySQL is quite good at. But if the site did experience significant traffic, copies of the AMI could be spun up with a proxy server in front of all of them to distribute load across multiple servers. This approach would no longer be appropriate if the site were updated to maintain user state or start to require a non-trivial number of writes. If the real time analytics started to be a drag on the system even with smaller numbers of users we could pre-process injury windows results or cache the results as they're requested. If we expanded to more sports each could live on its own server and database so such an additional load wouldn't necessarily make our service layer more complex even as it made our ingestion layer more complex.
 
-Two other possibilities if we needed to scale out the database layer:
-MySQL Cluster: https://www.mysql.com/products/cluster/
+Two other possibilities if we needed to scale out the database layer:  
+MySQL Cluster: https://www.mysql.com/products/cluster/  
 Migrate to a Postgres Cluster: https://www.postgresql.org/docs/9.5/static/creating-cluster.html
 
 [Return to Documentation Index](index.md)
