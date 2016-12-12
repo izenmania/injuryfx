@@ -8,6 +8,8 @@
 4. Apache and MySQL start automatically so there is nothing to run.
 5. Confirm you see injuryfx in the home directory. This is a clone of the main application repository.
 
+All though the instance is available relativel quickly, we are taking advantage of caching features on MySQL that load at startup that prevent the system from performing quickly until after the caching service has completed. It's not a quick task; taking about ten minutes to complete. You can monitor the caching service progress at `/tmp/mysql-cache.log`. You can use the web tool prior to the caching completion but it will be slower.
+
 ### Test Flask
 
 1. From your browser visit http://your.aws.url/ (It may take a minute for the first page to render while the system is starting up).
