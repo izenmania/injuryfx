@@ -10,7 +10,7 @@
 
 ### Test Flask
 
-1. From your browser visit http://your.aws.url/
+1. From your browser visit http://your.aws.url/ (It may take a minute for the first page to render while the system is starting up).
 2. Confirm you see the home page graphic.
 ![Home Page Graphic](images/homepage.png)
 3. Click the Players link at the top right.
