@@ -12,6 +12,7 @@
 
 1. From your browser visit http://your.aws.url/
 2. Confirm you see the home page graphic.
+![Home Page Graphic](images/homepage.png)
 3. Click the Players link at the top right.
 4. You can view various players if you want to see the generated graphics and slash lines.
 
@@ -21,6 +22,7 @@
 2. From the project folder, run `python scripts/transaction-daily-load.py`. This will detect the most recent data loaded into the system, and import from that day to current.
 
 ### Connect to the MySQL Database
+
 1. run the command ```mysql -u root -p```.
 2. Enter the password: ```w205ifx```
 3. Databases of greatest interest: gameday, retrosheet, and injuryfx
