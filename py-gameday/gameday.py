@@ -133,7 +133,6 @@ if __name__ == '__main__':
     # initial DB code
     try:
         DB = store.Store()
-        print 'Database connected';
     except MySQLdb.Error, e:
         print 'Database connection problem- did you setup a db.ini? (error: %s)' % e
         raise SystemExit
@@ -197,8 +196,6 @@ if __name__ == '__main__':
         for day in days:
             day_url = '%s/day_%02d' % (month_url, day)
             
-            print day_url
-
             handler = Handler(day_url, args.gametype)
             handler.start()
             threads.append(handler)

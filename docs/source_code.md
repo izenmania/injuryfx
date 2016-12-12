@@ -11,6 +11,9 @@ Contains Python files for connecting to aws services.
 ### Directory: credentials
 Contains Python and YAML files to config database and aws credentials.
 
+### Directory: cron
+Script used in daily import cron job.
+
 ### Directory: db
 Contains Python files for connecting to and managing MySql database connections.
 

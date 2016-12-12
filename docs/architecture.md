@@ -46,7 +46,7 @@ Python provides several features that made it a good choice for our data ingesti
 - The requests and json packages enable easy scraping of MLB.com's JSON APIs.
 - Pandas dataframes are a good resource for aggregating at-bat stats.
 
-The incoming data from Gameday and MLB.com are reliably available on a daily basis, so streaming or queueing systems are not needed, and nightly batch processing is sufficient for aggregation.
+The incoming data from Gameday and MLB.com are reliably available on a daily basis, so streaming or queueing systems are not needed, and nightly batch processing is sufficient for aggregation. The AMI is configured to import fresh data at 2am daily using a cron job. The cron task is not useful between seasons but would start automatically bringing new data in when the new season starts. See `/etc/crontab`.
 
 #### Limitations
 
