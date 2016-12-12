@@ -20,14 +20,19 @@ def generate_heatmap(coords):
     # Process the coordinates into two separate vectors.
     for entry in coords:
         if "x" in entry and "y" in entry:
+            x_value, y_value = None, None
             for key, value in entry.iteritems():
                 # Only append valid entries. Multiply by 12 because pitchfx data is in feet, heatmap is in inches.
                 if key is "x" and value:
-                    x.append(12*float(value))
+                    x_value = 12*float(value)
                 elif key is "y" and value:
-                    y.append(12*float(value))
+                    y_value = 12*float(value)
                 else:
                     pass
+            # x and y must be the same size
+            if x_value is not None and y_value is not None:
+                y.append(y_value)
+                x.append(x_value)
 
 
     # Generate the 2d histogram
