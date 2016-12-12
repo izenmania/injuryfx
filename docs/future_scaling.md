@@ -27,6 +27,8 @@ If user state information, such as saved analyses and user accounts, becomes a p
 
 We have observed some slowness in the dynamic aggregation, particularly when integrating a combination of Retrosheet and Gameday data. If this becomes a significant problem at higher load, we may integrate pre-processed injury window results, or cache the results as they're requested.
 
+There are over 4 million rows in the gameday.pitch table. For improved performance we would like to partition that table, and gameday.atbat, by year.
+
 If there is significant need to scale, we may also consider a move to [MySQL Cluster](MySQL Cluster: https://www.mysql.com/products/cluster/) or [Postgres Cluster](https://www.postgresql.org/docs/9.5/static/creating-cluster.html).
 
 [Next > Sample Tools](sample_tools.md)  
